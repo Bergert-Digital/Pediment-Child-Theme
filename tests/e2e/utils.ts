@@ -100,8 +100,16 @@ export async function waitForChatTurnComplete(page: Page, timeoutMs = 120_000) {
 }
 
 /**
- * Clicks Publish through the WP 6.5 publish flow and returns the public
- * permalink of the published page.
+ * Clicks Publish through the WP 6.5 publish flow and returns an absolute,
+ * front-end-resolvable permalink for the published page.
+ *
+ * The URL is built as `<origin>/?page_id=<id>` from the editor store rather
+ * than scraped from a UI link. Scraping was unreliable: `getByRole('link',
+ * { name: /view page/i })` matched the admin "Pages" menu link, and slug-path
+ * permalinks 404 at Apache under the wp-env default plain-permalink structure.
+ * `?page_id=<id>` resolves regardless of permalink structure (it is canonical
+ * under plain permalinks and 301s to the pretty URL when one is configured),
+ * matching the e2e URL convention used elsewhere in this project.
  */
 export async function publishAndGetPermalink(page: Page): Promise<string> {
   // Top-bar Publish button.
@@ -112,10 +120,22 @@ export async function publishAndGetPermalink(page: Page): Promise<string> {
   await panel.waitFor({ state: 'visible', timeout: 15_000 });
   await panel.getByRole('button', { name: /^Publish$/i }).first().click();
 
-  // Post-publish state exposes a "View Page"/"View page" link to the permalink.
-  const viewLink = page.getByRole('link', { name: /view page/i }).first();
-  await viewLink.waitFor({ state: 'visible', timeout: 15_000 });
-  const href = await viewLink.getAttribute('href');
-  if (!href) throw new Error('Published but could not read permalink from View Page link');
-  return href;
+  // Wait until the editor reports the post as actually published, so the post
+  // id is assigned and stable before we build the URL.
+  await page.waitForFunction(
+    () => {
+      const ed = (window as any).wp?.data?.select?.('core/editor');
+      return !!ed && !!ed.getCurrentPostId() && ed.getEditedPostAttribute('status') === 'publish';
+    },
+    undefined,
+    { timeout: 15_000 },
+  );
+
+  const id = await page.evaluate(
+    () => (window as any).wp.data.select('core/editor').getCurrentPostId() as number,
+  );
+  if (!id) throw new Error('Published but could not read post id from the editor store');
+
+  // page.url() is the editor admin URL on the same origin as the front-end.
+  return new URL(`/?page_id=${id}`, page.url()).toString();
 }
