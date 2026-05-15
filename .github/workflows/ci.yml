@@ -41,6 +41,12 @@ jobs:
           ref: development
           token: ${{ secrets.STARTER_THEME_PAT }}
           path: wp-starter-theme
+      - uses: actions/checkout@v4
+        with:
+          repository: Bergert-Digital/WP-Starter-AI
+          ref: development
+          token: ${{ secrets.STARTER_THEME_PAT }}
+          path: wp-starter-ai
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -52,6 +58,8 @@ jobs:
           tools: composer
       - name: Build parent theme blocks
         run: cd wp-starter-theme && npm ci && npm run build
+      - name: Build plugin
+        run: cd wp-starter-ai && composer install --prefer-dist --no-progress && npm ci && npm run build
       - name: Install child deps
         run: cd wp-starter-child-theme && composer install --prefer-dist --no-progress && npm ci
       - name: Start wp-env
@@ -75,12 +83,23 @@ jobs:
           ref: development
           token: ${{ secrets.STARTER_THEME_PAT }}
           path: wp-starter-theme
+      - uses: actions/checkout@v4
+        with:
+          repository: Bergert-Digital/WP-Starter-AI
+          ref: development
+          token: ${{ secrets.STARTER_THEME_PAT }}
+          path: wp-starter-ai
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: npm
           cache-dependency-path: wp-starter-child-theme/package-lock.json
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
       - run: cd wp-starter-theme && npm ci && npm run build
+      - run: cd wp-starter-ai && composer install --prefer-dist --no-progress && npm ci && npm run build
       - run: cd wp-starter-child-theme && npm ci
       - run: cd wp-starter-child-theme && npx playwright install --with-deps chromium
       - run: cd wp-starter-child-theme && npm run env:start
