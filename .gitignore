@@ -5,3 +5,4 @@
 /test-results/
 .phpunit.result.cache
 .DS_Store
+.wp-env.override.json
