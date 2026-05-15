@@ -63,8 +63,8 @@ unsuitability) is accepted and contained by gating (see below).
    to the permalink at `:8890` and assert:
    - HTTP 200 and no PHP fatal/warning/notice text in the DOM,
    - no browser console errors collected during load,
-   - multiple section blocks rendered visibly (≥ 3 `.wp-block-starter-*`
-     section wrappers; a hero is present),
+   - multiple section blocks rendered visibly (≥ 3 distinct `.starter-*`
+     section wrappers, e.g. `.starter-hero` / `.starter-cta` / `.starter-faq`),
    - the page is non-trivial (rendered visible text length over a sane floor).
 
 ## Persistence (no teardown)
