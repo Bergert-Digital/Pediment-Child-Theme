@@ -37,6 +37,18 @@ test('live model composes a bike-mechanic landing page that renders for a visito
   // Docker env. Test is manual-only, so a generous timeout costs nothing.
   test.setTimeout(360_000);
 
+  // Diagnostic capture from the very start: if the block editor hits its React
+  // error boundary while applying AI-emitted blocks, the useful signal is the
+  // uncaught exception / console.error, not a downstream "0 blocks". Collect
+  // both for the whole test so a crash fails with an actionable stack.
+  const editorJsErrors: string[] = [];
+  page.on('pageerror', (err) => {
+    editorJsErrors.push(`[pageerror] ${err.stack ?? err.message}`);
+  });
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') editorJsErrors.push(`[console.error] ${msg.text()}`);
+  });
+
   await login(page);
   await openNewPage(page, `AI Live: Bike Mechanic ${new Date().toISOString()}`);
 
@@ -52,6 +64,20 @@ test('live model composes a bike-mechanic landing page that renders for a visito
 
   // Wait for the non-deterministic streaming turn to finish (throws on error).
   await waitForChatTurnComplete(page, 180_000);
+
+  // Explicit editor-crash detection. A non-deterministic AI emit can drive
+  // Gutenberg into its React error boundary; without this check the test would
+  // fail later with an opaque "expected >= 4, received 0". Fail here instead
+  // with the captured JS errors so the product root cause is actionable.
+  const crashBanner = page.getByText(/The editor has encountered an unexpected error/i);
+  if (await crashBanner.isVisible().catch(() => false)) {
+    throw new Error(
+      'Gutenberg crashed after the AI turn (React error boundary). ' +
+        'The AI-emitted block tree likely broke a block edit component.\n' +
+        'Captured browser JS errors:\n' +
+        (editorJsErrors.length ? editorJsErrors.join('\n---\n') : '(none captured)'),
+    );
+  }
 
   // Editor sanity guard: a real page was composed, not a single paragraph.
   const editor = await canvas(page);
