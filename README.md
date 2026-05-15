@@ -1,6 +1,6 @@
 # wp-starter-child-theme
 
-The agency starting point. A child theme of [wp-starter-theme](https://github.com/Bergert-Digital/wp-starter-theme). Fork or download as a zip, rename it, add your blocks and `theme.json` overrides, and push to your own git for per-client install.
+The agency starting point. A child theme of [wp-starter-theme](https://github.com/Bergert-Digital/WP-Starter). Fork or download as a zip, rename it, add your blocks and `theme.json` overrides, and push to your own git for per-client install.
 
 ## Install order on a fresh WordPress
 
