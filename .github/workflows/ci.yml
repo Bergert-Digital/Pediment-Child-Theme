@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  phpcs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+      - run: composer install --prefer-dist --no-progress
+      - run: composer lint
+
+  lint-js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - run: npm run lint:js
+      - run: npm run build
+
+  phpunit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: wp-starter-child-theme
+      - uses: actions/checkout@v4
+        with:
+          repository: Bergert-Digital/WP-Starter
+          ref: development
+          token: ${{ secrets.STARTER_THEME_PAT }}
+          path: wp-starter-theme
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: wp-starter-child-theme/package-lock.json
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+      - name: Build parent theme blocks
+        run: cd wp-starter-theme && npm ci && npm run build
+      - name: Install child deps
+        run: cd wp-starter-child-theme && composer install --prefer-dist --no-progress && npm ci
+      - name: Start wp-env
+        run: cd wp-starter-child-theme && npm run env:start
+      - name: Build child blocks
+        run: cd wp-starter-child-theme && npm run build
+      - name: Run PHPUnit
+        run: cd wp-starter-child-theme && npx wp-env run tests-wordpress --env-cwd=wp-content/themes/wp-starter-child-theme vendor/bin/phpunit
+      - if: always()
+        run: cd wp-starter-child-theme && npm run env:stop
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: wp-starter-child-theme
+      - uses: actions/checkout@v4
+        with:
+          repository: Bergert-Digital/WP-Starter
+          ref: development
+          token: ${{ secrets.STARTER_THEME_PAT }}
+          path: wp-starter-theme
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: wp-starter-child-theme/package-lock.json
+      - run: cd wp-starter-theme && npm ci && npm run build
+      - run: cd wp-starter-child-theme && npm ci
+      - run: cd wp-starter-child-theme && npx playwright install --with-deps chromium
+      - run: cd wp-starter-child-theme && npm run env:start
+      - run: cd wp-starter-child-theme && npm run build
+      - run: cd wp-starter-child-theme && npx wp-env run cli wp theme activate wp-starter-child-theme
+      - run: cd wp-starter-child-theme && npm run e2e
+      - if: always()
+        run: cd wp-starter-child-theme && npm run env:stop
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: wp-starter-child-theme/playwright-report/
