@@ -14,7 +14,7 @@ $wrapper = get_block_wrapper_attributes( array( 'class' => 'starter-child-promo-
 
 ob_start();
 ?>
-<aside <?php echo $wrapper; // phpcs:ignore ?>>
+<aside <?php echo $wrapper; // phpcs:ignore WordPress.Security.EscapeOutput ?>>
 	<?php if ( '' !== $headline ) : ?>
 		<strong class="starter-child-promo-banner__headline"><?php echo wp_kses_post( $headline ); ?></strong>
 	<?php endif; ?>
