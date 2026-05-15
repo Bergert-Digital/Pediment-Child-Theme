@@ -105,18 +105,23 @@ test('live model composes a bike-mechanic landing page that renders for a visito
   await expect(body).not.toContainText('There has been a critical error');
   await expect(body).not.toContainText(/Fatal error|Parse error|Warning:|Notice:|Deprecated:/);
 
-  // Multiple distinct section blocks rendered visibly.
+  // The AI used the design system, not just core blocks. Deliberately
+  // permissive (>= 2, not >= 3): live runs vary in richness — some compose
+  // 6+ starter sections, others a thinner hero+faq page leaning on core
+  // blocks. >= 2 distinct starter sections + the >= 4-block editor guard +
+  // the text floor below still rejects a crash, an empty page, or a
+  // single-paragraph / pure-core response, while tolerating model variance.
   let renderedSections = 0;
   for (const cls of SECTION_CLASSES) {
     if (await page.locator(`.${cls}`).first().isVisible().catch(() => false)) {
       renderedSections += 1;
     }
   }
-  expect(renderedSections, 'distinct rendered starter section blocks').toBeGreaterThanOrEqual(3);
+  expect(renderedSections, 'distinct rendered starter section blocks').toBeGreaterThanOrEqual(2);
 
-  // Page is non-trivial: meaningful visible text.
+  // Page is substantial (a real landing page, even if it uses core blocks).
   const textLen = (await body.innerText()).trim().length;
-  expect(textLen, 'visible body text length').toBeGreaterThan(400);
+  expect(textLen, 'visible body text length').toBeGreaterThan(600);
 
   // No browser console errors during the visitor load.
   expect(consoleErrors, `console errors: ${consoleErrors.join(' | ')}`).toHaveLength(0);
