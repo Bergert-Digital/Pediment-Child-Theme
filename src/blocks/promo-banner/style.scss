@@ -1,0 +1,13 @@
+.starter-child-promo-banner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wp--preset--spacing--10);
+  padding: var(--wp--preset--spacing--30);
+  background: var(--wp--preset--color--accent);
+  color: var(--wp--preset--color--surface);
+  border-radius: 0.5rem;
+
+  &__headline { font-size: var(--wp--preset--font-size--lg); }
+  &__body     { margin: 0; opacity: 0.95; }
+  &__link     { align-self: flex-start; color: var(--wp--preset--color--surface); text-decoration: underline; }
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "starter-child/promo-banner",
+  "title": "Promo Banner",
+  "category": "design",
+  "description": "Example child-theme block: a promotional banner with headline, body, and link. Replace or delete before shipping to a client.",
+  "textdomain": "starter-child",
+  "supports": { "html": false, "align": ["wide", "full"] },
+  "attributes": {
+    "headline": { "type": "string", "default": "" },
+    "body":     { "type": "string", "default": "" },
+    "linkText": { "type": "string", "default": "" },
+    "linkUrl":  { "type": "string", "default": "" }
+  },
+  "editorScript": "file:./index.js",
+  "style":        "file:./style-index.css",
+  "render":       "file:./render.php"
+}
