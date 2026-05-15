@@ -2,9 +2,9 @@
 /** @var array $attributes */
 
 $headline  = isset( $attributes['headline'] ) ? (string) $attributes['headline'] : '';
-$body      = isset( $attributes['body'] )     ? (string) $attributes['body']     : '';
+$body      = isset( $attributes['body'] ) ? (string) $attributes['body'] : '';
 $link_text = isset( $attributes['linkText'] ) ? (string) $attributes['linkText'] : '';
-$link_url  = isset( $attributes['linkUrl'] )  ? (string) $attributes['linkUrl']  : '';
+$link_url  = isset( $attributes['linkUrl'] ) ? (string) $attributes['linkUrl'] : '';
 
 if ( '' === $headline && '' === $body ) {
 	return '';
