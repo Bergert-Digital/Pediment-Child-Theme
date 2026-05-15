@@ -49,7 +49,15 @@ async function openSidebarTab(page: Page, tab: 'edit-post/document' | 'edit-post
 
 /**
  * Opens the Document sidebar, expands the "AI Chat" panel, and returns its
- * locator (`.starter-ai-chat`).
+ * locator (`.starter-ai-chat`) — only once the panel can actually accept a
+ * send.
+ *
+ * ChatPanel.send early-returns `if (!conv || !postId)`, silently dropping the
+ * message (the Composer still clears its textarea). useConversation loads the
+ * conversation asynchronously via REST after the post has an id, so sending
+ * immediately after the panel renders is a race: the message vanishes with no
+ * optimistic echo. Block until the editor has a post id and the
+ * `starter-ai/chat` store holds the conversation for that post.
  */
 export async function openAIChatPanel(page: Page) {
   await openSidebarTab(page, 'edit-post/document');
@@ -60,6 +68,18 @@ export async function openAIChatPanel(page: Page) {
   }
   const panel = page.locator('.starter-ai-chat').first();
   await panel.waitFor({ state: 'visible', timeout: 10_000 });
+
+  await page.waitForFunction(
+    () => {
+      const wp = (window as any).wp;
+      const postId = wp?.data?.select?.('core/editor')?.getCurrentPostId?.();
+      const conv = wp?.data?.select?.('starter-ai/chat')?.getConversation?.();
+      return !!postId && !!conv && conv.post_id === postId;
+    },
+    undefined,
+    { timeout: 20_000 },
+  );
+
   return panel;
 }
 
