@@ -10,6 +10,15 @@
  */
 class ThemeJsonInheritsPedimentTest extends WP_UnitTestCase {
 
+	public function set_up() {
+		parent::set_up();
+		$this->assertSame(
+			'wp-starter-child-theme',
+			wp_get_theme()->get_stylesheet(),
+			'These Pediment-inheritance guards are only meaningful with the child theme active.'
+		);
+	}
+
 	/**
 	 * @return array<string,string> slug => hex, from the theme-origin palette.
 	 */
