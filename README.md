@@ -11,6 +11,39 @@ WordPress has no automatic theme-dependency resolution, so order matters:
 3. **Activate the child** (`Starter Child Theme`).
 4. Install the **wp-starter-ai** plugin zip any time (Plugins → Add New → Upload).
 
+## Overriding the Pediment design per client
+
+This child theme ships **no `theme.json` `settings`** on purpose: it inherits
+the parent (`wp-starter-theme`) Pediment design system as-is — Deep Cyan
+accent, Plus Jakarta Sans, the navy/surface palette. Child-theme sites get the
+locked look with zero configuration.
+
+To re-skin a client, add a `settings` block back to `theme.json` and override
+only the tokens you need — WordPress deep-merges it over the parent, so unset
+tokens keep their Pediment values. Example (`theme.json`):
+
+```json
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 2,
+  "settings": {
+    "color": {
+      "palette": [
+        { "slug": "accent",       "color": "#B91C1C", "name": "Accent" },
+        { "slug": "accent-hover", "color": "#991B1B", "name": "Accent hover" }
+      ]
+    },
+    "typography": {
+      "fontFamilies": [
+        { "slug": "heading", "name": "Heading", "fontFamily": "Georgia, serif" }
+      ]
+    }
+  }
+}
+```
+
+Keep overrides minimal — every slug you redeclare stops tracking the parent.
+
 ## First-fork rename checklist
 
 Grep-replace these tokens with your client's identity before first client ship:
