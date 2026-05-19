@@ -1,27 +1,4 @@
 {
   "$schema": "https://schemas.wp.org/trunk/theme.json",
-  "version": 2,
-  "settings": {
-    "color": {
-      "palette": [
-        { "slug": "primary",          "color": "#0F172A", "name": "Primary" },
-        { "slug": "accent",           "color": "#4F46E5", "name": "Accent" },
-        { "slug": "accent-hover",     "color": "#4338CA", "name": "Accent hover" },
-        { "slug": "surface",          "color": "#FFFFFF", "name": "Surface" },
-        { "slug": "surface-elevated", "color": "#F8FAFC", "name": "Surface elevated" },
-        { "slug": "surface-sunken",   "color": "#F1F5F9", "name": "Surface sunken" },
-        { "slug": "text",             "color": "#0F172A", "name": "Text" },
-        { "slug": "text-muted",       "color": "#64748B", "name": "Text muted" },
-        { "slug": "border",           "color": "#E2E8F0", "name": "Border" },
-        { "slug": "border-strong",    "color": "#CBD5E1", "name": "Border strong" }
-      ]
-    },
-    "typography": {
-      "fontFamilies": [
-        { "slug": "body",    "name": "Body",    "fontFamily": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" },
-        { "slug": "heading", "name": "Heading", "fontFamily": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" },
-        { "slug": "mono",    "name": "Mono",    "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace" }
-      ]
-    }
-  }
+  "version": 2
 }
