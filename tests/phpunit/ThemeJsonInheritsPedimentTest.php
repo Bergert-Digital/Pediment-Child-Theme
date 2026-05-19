@@ -17,6 +17,16 @@ class ThemeJsonInheritsPedimentTest extends WP_UnitTestCase {
 			wp_get_theme()->get_stylesheet(),
 			'These Pediment-inheritance guards are only meaningful with the child theme active.'
 		);
+		// The test bootstrap primes WP_Theme_JSON_Resolver's static cache
+		// before/at theme switch, and WP_UnitTestCase does not reset it.
+		// Force a fresh parent+child merge so the resolved tokens are read,
+		// not the stale (empty) bootstrap snapshot.
+		WP_Theme_JSON_Resolver::clean_cached_data();
+	}
+
+	public function tear_down() {
+		WP_Theme_JSON_Resolver::clean_cached_data();
+		parent::tear_down();
 	}
 
 	/**
