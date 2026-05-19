@@ -18,9 +18,18 @@ the parent (`wp-starter-theme`) Pediment design system as-is — Deep Cyan
 accent, Plus Jakarta Sans, the navy/surface palette. Child-theme sites get the
 locked look with zero configuration.
 
-To re-skin a client, add a `settings` block back to `theme.json` and override
-only the tokens you need — WordPress deep-merges it over the parent, so unset
-tokens keep their Pediment values. Example (`theme.json`):
+To re-skin a client, add a `settings` block back to `theme.json`. WordPress
+merges child `theme.json` over the parent **per top-level subtree, not per
+slug**: a subtree you omit entirely (e.g. no `typography` key) keeps all its
+Pediment values, but any preset **array you declare — `color.palette`,
+`typography.fontFamilies`, `fontSizes`, … — replaces the parent's array
+wholesale**. So when you declare `palette`, copy the parent's full Pediment
+palette and edit only the entries you want; slugs you leave out (including
+`accent-tint`) disappear on that site. Web fonts additionally need a
+`fontFace` array with `src` on the family.
+
+Abbreviated example (`theme.json`) — in practice paste the parent's complete
+`palette`/`fontFamilies` and change only the values you need:
 
 ```json
 {
@@ -42,7 +51,7 @@ tokens keep their Pediment values. Example (`theme.json`):
 }
 ```
 
-Keep overrides minimal — every slug you redeclare stops tracking the parent.
+Rule of thumb: omit a subtree to keep Pediment; declare an array and you own all of it.
 
 ## First-fork rename checklist
 
