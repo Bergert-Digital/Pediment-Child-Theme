@@ -1,12 +1,12 @@
 # wp-starter-child-theme
 
-The agency starting point. A child theme of [wp-starter-theme](https://github.com/Bergert-Digital/WP-Starter). Fork or download as a zip, rename it, add your blocks and `theme.json` overrides, and push to your own git for per-client install.
+The agency starting point. A child theme of [Pediment](https://github.com/bergert/pediment). Fork or download as a zip, rename it, add your blocks and `theme.json` overrides, and push to your own git for per-client install.
 
 ## Install order on a fresh WordPress
 
 WordPress has no automatic theme-dependency resolution, so order matters:
 
-1. Upload and install the **parent**: `wp-starter-theme` zip (Appearance → Add New → Upload).
+1. Upload and install the **parent**: `pediment` zip (Appearance → Add New → Upload).
 2. Upload and install **this child** theme zip.
 3. **Activate the child** (`Starter Child Theme`).
 4. Install the **wp-starter-ai** plugin zip any time (Plugins → Add New → Upload).
@@ -14,7 +14,7 @@ WordPress has no automatic theme-dependency resolution, so order matters:
 ## Overriding the Pediment design per client
 
 This child theme ships **no `theme.json` `settings`** on purpose: it inherits
-the parent (`wp-starter-theme`) Pediment design system as-is — Deep Cyan
+the parent (`pediment`) Pediment design system as-is — Deep Cyan
 accent, Plus Jakarta Sans, the navy/surface palette. Child-theme sites get the
 locked look with zero configuration.
 
@@ -67,7 +67,7 @@ Then **replace or delete** `src/blocks/promo-banner/` — it's a worked example,
 
 ## Development
 
-All three repos cloned side by side (`../wp-starter-theme`, `../wp-starter-ai`):
+All three repos cloned side by side (`../pediment`, `../wp-starter-ai`):
 
 ```bash
 composer install

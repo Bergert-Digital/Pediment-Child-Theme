@@ -2,7 +2,7 @@
 /**
  * Starter Child Theme bootstrap.
  *
- * Fork target. The Starter Theme (parent) is read-only; your blocks,
+ * Fork target. Pediment (parent) is read-only; your blocks,
  * theme.json overrides and child-specific PHP live here.
  *
  * @package StarterChild

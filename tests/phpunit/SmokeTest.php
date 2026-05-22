@@ -9,7 +9,7 @@ class SmokeTest extends WP_UnitTestCase {
 		$this->assertSame( 'wp-starter-child-theme', wp_get_theme()->get_stylesheet() );
 	}
 
-	public function test_parent_template_is_starter_theme() {
-		$this->assertSame( 'wp-starter-theme', wp_get_theme()->get_template() );
+	public function test_parent_template_is_pediment() {
+		$this->assertSame( 'pediment', wp_get_theme()->get_template() );
 	}
 }

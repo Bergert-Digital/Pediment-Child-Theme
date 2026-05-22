@@ -1,6 +1,6 @@
 {
   "name": "bergert/wp-starter-child-theme",
-  "description": "Agency starter child theme for wp-starter-theme",
+  "description": "Agency starter child theme for Pediment",
   "type": "wordpress-theme",
   "license": "GPL-2.0-or-later",
   "require": {

@@ -4,7 +4,7 @@
  * Guards that the child theme does NOT mask the parent's Pediment tokens.
  *
  * Runs in the child wp-env base (:8890/:8891), which mounts this child
- * checkout plus ../wp-starter-theme (the parent). With the child theme
+ * checkout plus ../pediment (the parent). With the child theme
  * active and no `settings` block in the child theme.json, the resolved
  * global settings must be the parent's Pediment palette/typography.
  *
