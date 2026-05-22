@@ -4,9 +4,9 @@
 
 **Goal:** A manual-only Playwright e2e test that drives the real AI Chat panel with "create a landing page for a local bike mechanic", lets the live Claude model compose a page, publishes it, and asserts it renders cleanly for a visitor — leaving the page alive for manual inspection.
 
-**Architecture:** New standalone spec in the child-theme e2e suite, gated behind `RUN_LIVE_AI=1` so it never runs in the default `npm run e2e` or CI. Runs against the existing child-theme wp-env at `http://localhost:8890`, which already has a live `ANTHROPIC_API_KEY` and runs `wp-starter-ai` in live mode. Completion of the non-deterministic streaming turn is detected via the authoritative `starter-ai/chat` Redux store selector. No teardown — the published page persists.
+**Architecture:** New standalone spec in the child-theme e2e suite, gated behind `RUN_LIVE_AI=1` so it never runs in the default `npm run e2e` or CI. Runs against the existing child-theme wp-env at `http://localhost:8890`, which already has a live `ANTHROPIC_API_KEY` and runs `pediment-ai` in live mode. Completion of the non-deterministic streaming turn is detected via the authoritative `pediment-ai/chat` Redux store selector. No teardown — the published page persists.
 
-**Tech Stack:** Playwright (`@playwright/test` ^1.45), WordPress 6.5 block editor, `@wordpress/data` store `starter-ai/chat`.
+**Tech Stack:** Playwright (`@playwright/test` ^1.45), WordPress 6.5 block editor, `@wordpress/data` store `pediment-ai/chat`.
 
 ---
 
@@ -16,16 +16,16 @@
 
 ## Pinned facts (verified from source)
 
-- Chat store name: `starter-ai/chat`. Selector `getStreaming()` returns the streaming `ChatMessage | null` (null when the turn is finished/cleared). Selector `getError()` returns `string | null`. Source: `wp-starter-ai/editor/chat/store.ts`.
-- Live provider is active unless `STARTER_AI_MOCK` constant or `mock_mode` option is set; the child-theme env sets neither and supplies `ANTHROPIC_API_KEY` via `.wp-env.override.json`. Source: `wp-starter-ai/src/Bootstrap.php`.
-- Front-end render classes are `starter-<block>` (NOT `wp-block-starter-*`): `starter-hero`, `starter-cta`, `starter-faq`, `starter-prose`, `starter-pull-quote`, `starter-stat`, `starter-contact-form`, `starter-blog-index`. Source: `wp-starter-theme/src/blocks/*/render.php` and `wp-starter-theme/tests/e2e/editor-blocks.spec.ts`.
-- Admin credentials: `admin` / `password`. Editor canvas is an iframe `iframe[name="editor-canvas"]` in WP 6.5. Source: `wp-starter-ai/tests/e2e/utils.ts`.
-- Child-theme `tests/e2e/` has only `smoke.spec.ts` and **no `utils.ts`** — helpers are created locally by this plan. Base URL `http://localhost:8890` is set in `wp-starter-child-theme/playwright.config.ts`.
+- Chat store name: `pediment-ai/chat`. Selector `getStreaming()` returns the streaming `ChatMessage | null` (null when the turn is finished/cleared). Selector `getError()` returns `string | null`. Source: `pediment-ai/editor/chat/store.ts`.
+- Live provider is active unless `STARTER_AI_MOCK` constant or `mock_mode` option is set; the child-theme env sets neither and supplies `ANTHROPIC_API_KEY` via `.wp-env.override.json`. Source: `pediment-ai/src/Bootstrap.php`.
+- Front-end render classes are `starter-<block>` (NOT `wp-block-pediment-*`): `starter-hero`, `starter-cta`, `starter-faq`, `starter-prose`, `starter-pull-quote`, `starter-stat`, `starter-contact-form`, `starter-blog-index`. Source: `pediment/src/blocks/*/render.php` and `pediment/tests/e2e/editor-blocks.spec.ts`.
+- Admin credentials: `admin` / `password`. Editor canvas is an iframe `iframe[name="editor-canvas"]` in WP 6.5. Source: `pediment-ai/tests/e2e/utils.ts`.
+- Child-theme `tests/e2e/` has only `smoke.spec.ts` and **no `utils.ts`** — helpers are created locally by this plan. Base URL `http://localhost:8890` is set in `pediment-child-theme/playwright.config.ts`.
 
 ## File Structure
 
-- Create: `wp-starter-child-theme/tests/e2e/utils.ts` — shared local helpers (`canvas`, `login`, `openNewPage`, `openAIChatPanel`, `waitForChatTurnComplete`, `publishAndGetPermalink`). One responsibility: reusable editor/chat e2e primitives for the child-theme suite.
-- Create: `wp-starter-child-theme/tests/e2e/ai-page-generation.live.spec.ts` — the single gated live test. One responsibility: the end-to-end live page-generation scenario + assertions.
+- Create: `pediment-child-theme/tests/e2e/utils.ts` — shared local helpers (`canvas`, `login`, `openNewPage`, `openAIChatPanel`, `waitForChatTurnComplete`, `publishAndGetPermalink`). One responsibility: reusable editor/chat e2e primitives for the child-theme suite.
+- Create: `pediment-child-theme/tests/e2e/ai-page-generation.live.spec.ts` — the single gated live test. One responsibility: the end-to-end live page-generation scenario + assertions.
 
 No existing files are modified.
 
@@ -34,12 +34,12 @@ No existing files are modified.
 ### Task 1: Local e2e helpers for the child-theme suite
 
 **Files:**
-- Create: `wp-starter-child-theme/tests/e2e/utils.ts`
+- Create: `pediment-child-theme/tests/e2e/utils.ts`
 - Test: exercised via Task 2's spec (helpers have no standalone unit test; they are e2e glue verified by the live run in Task 3).
 
 - [ ] **Step 1: Write the helpers file**
 
-Create `wp-starter-child-theme/tests/e2e/utils.ts` with exactly this content:
+Create `pediment-child-theme/tests/e2e/utils.ts` with exactly this content:
 
 ```ts
 import { Page, FrameLocator } from '@playwright/test';
@@ -104,7 +104,7 @@ export async function openAIChatPanel(page: Page) {
 
 /**
  * Waits for the live, non-deterministic streaming turn to finish. The
- * `starter-ai/chat` store sets `getStreaming()` back to null when the turn
+ * `pediment-ai/chat` store sets `getStreaming()` back to null when the turn
  * completes or is cleared. Throws if the store reports an error.
  *
  * @param timeoutMs generous default to absorb multi-round agentic tool use.
@@ -114,7 +114,7 @@ export async function waitForChatTurnComplete(page: Page, timeoutMs = 120_000) {
   // don't pass instantly on the initial null state before the POST fires.
   await page.waitForFunction(
     () => {
-      const s = (window as any).wp?.data?.select?.('starter-ai/chat');
+      const s = (window as any).wp?.data?.select?.('pediment-ai/chat');
       return !!s && s.getStreaming() !== null;
     },
     undefined,
@@ -123,7 +123,7 @@ export async function waitForChatTurnComplete(page: Page, timeoutMs = 120_000) {
 
   await page.waitForFunction(
     () => {
-      const s = (window as any).wp?.data?.select?.('starter-ai/chat');
+      const s = (window as any).wp?.data?.select?.('pediment-ai/chat');
       if (!s) return false;
       if (s.getError()) return true; // resolve; caller inspects error after
       return s.getStreaming() === null;
@@ -133,7 +133,7 @@ export async function waitForChatTurnComplete(page: Page, timeoutMs = 120_000) {
   );
 
   const err = await page.evaluate(
-    () => (window as any).wp?.data?.select?.('starter-ai/chat')?.getError() ?? null,
+    () => (window as any).wp?.data?.select?.('pediment-ai/chat')?.getError() ?? null,
   );
   if (err) throw new Error(`AI chat turn errored: ${err}`);
 }
@@ -162,14 +162,14 @@ export async function publishAndGetPermalink(page: Page): Promise<string> {
 
 - [ ] **Step 2: Type-check the helpers compile**
 
-Run: `cd /Users/jonas/Entwicklung/wp-starter-child-theme && npx tsc --noEmit tests/e2e/utils.ts --moduleResolution node --target es2020 --skipLibCheck`
+Run: `cd /Users/jonas/Entwicklung/pediment-child-theme && npx tsc --noEmit tests/e2e/utils.ts --moduleResolution node --target es2020 --skipLibCheck`
 
 Expected: no output / exit 0 (or only "Cannot find module '@playwright/test' types" if not installed — acceptable; the real gate is the Playwright run in Task 3). If `@playwright/test` resolves, expect zero errors.
 
 - [ ] **Step 3: Commit**
 
 ```bash
-cd /Users/jonas/Entwicklung/wp-starter-child-theme
+cd /Users/jonas/Entwicklung/pediment-child-theme
 git add tests/e2e/utils.ts
 git commit -m "test(e2e): local helpers for child-theme suite (chat turn wait, publish)
 
@@ -181,12 +181,12 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 ### Task 2: The gated live page-generation spec
 
 **Files:**
-- Create: `wp-starter-child-theme/tests/e2e/ai-page-generation.live.spec.ts`
+- Create: `pediment-child-theme/tests/e2e/ai-page-generation.live.spec.ts`
 - Test: this file IS the test.
 
 - [ ] **Step 1: Write the spec file**
 
-Create `wp-starter-child-theme/tests/e2e/ai-page-generation.live.spec.ts` with exactly this content:
+Create `pediment-child-theme/tests/e2e/ai-page-generation.live.spec.ts` with exactly this content:
 
 ```ts
 import { test, expect } from '@playwright/test';
@@ -207,7 +207,7 @@ test.skip(
   'Live AI test — set RUN_LIVE_AI=1 to run (spends Anthropic tokens)',
 );
 
-// Front-end render classes emitted by starter blocks (NOT wp-block-starter-*).
+// Front-end render classes emitted by starter blocks (NOT wp-block-pediment-*).
 const SECTION_CLASSES = [
   'starter-hero',
   'starter-cta',
@@ -287,14 +287,14 @@ test('live model composes a bike-mechanic landing page that renders for a visito
 
 - [ ] **Step 2: Verify the test is skipped by default (no tokens spent)**
 
-Run: `cd /Users/jonas/Entwicklung/wp-starter-child-theme && npx playwright test ai-page-generation.live --list && npx playwright test ai-page-generation.live`
+Run: `cd /Users/jonas/Entwicklung/pediment-child-theme && npx playwright test ai-page-generation.live --list && npx playwright test ai-page-generation.live`
 
 Expected: the test is listed, then the run reports it **skipped** (1 skipped, 0 passed) because `RUN_LIVE_AI` is unset. No network/model call occurs.
 
 - [ ] **Step 3: Commit**
 
 ```bash
-cd /Users/jonas/Entwicklung/wp-starter-child-theme
+cd /Users/jonas/Entwicklung/pediment-child-theme
 git add tests/e2e/ai-page-generation.live.spec.ts
 git commit -m "test(e2e): manual-only live AI page-generation test
 
@@ -316,11 +316,11 @@ This task is **not** automated and **not** run by a subagent. It requires the li
 - [ ] **Step 1: Confirm the child-theme wp-env is up at :8890**
 
 Run: `curl -s -o /dev/null -w "%{http_code}" http://localhost:8890`
-Expected: `200` (or `30x`). If it fails, the env is down — start/repair the child-theme wp-env before continuing (do not start wp-env from `wp-starter-ai` or `wp-starter-theme`).
+Expected: `200` (or `30x`). If it fails, the env is down — start/repair the child-theme wp-env before continuing (do not start wp-env from `pediment-ai` or `pediment`).
 
 - [ ] **Step 2: Run the live test**
 
-Run: `cd /Users/jonas/Entwicklung/wp-starter-child-theme && RUN_LIVE_AI=1 npx playwright test ai-page-generation.live --reporter=list`
+Run: `cd /Users/jonas/Entwicklung/pediment-child-theme && RUN_LIVE_AI=1 npx playwright test ai-page-generation.live --reporter=list`
 
 Expected: `1 passed`. The console output contains a line:
 `[ai-page-generation.live] Published page: http://localhost:8890/...`
@@ -343,11 +343,11 @@ If it fails on `waitForChatTurnComplete` timeout, the live turn legitimately ran
 - Location & gating (`ai-page-generation.live.spec.ts`, `RUN_LIVE_AI` skip, manual-only) → Task 2 Step 1, verified Task 2 Step 2. ✓
 - Local helpers ported (no cross-repo import) → Task 1. ✓
 - Flow steps 1–6 (login→newpage→panel→prompt→wait→guard→publish→front-end asserts) → Task 2 Step 1. ✓
-- Completion via authoritative store selector → `waitForChatTurnComplete` using `starter-ai/chat` `getStreaming`/`getError`. ✓
+- Completion via authoritative store selector → `waitForChatTurnComplete` using `pediment-ai/chat` `getStreaming`/`getError`. ✓
 - Persistence / no teardown / log permalink → Task 2 Step 1 (no cleanup, `console.log`). ✓
 - Out-of-scope items (no separator/keyword/strict matrix) → not asserted. ✓
 - "Pin during planning" details → resolved in "Pinned facts". ✓
 
 **2. Placeholder scan:** No TBD/TODO; all code blocks complete; commands have expected output. ✓
 
-**3. Type consistency:** Helper names (`canvas`, `login`, `openNewPage`, `openAIChatPanel`, `waitForChatTurnComplete`, `publishAndGetPermalink`) are defined in Task 1 and imported with identical names in Task 2. Store selectors `getStreaming`/`getError` match `starter-ai/chat` source. ✓
+**3. Type consistency:** Helper names (`canvas`, `login`, `openNewPage`, `openAIChatPanel`, `waitForChatTurnComplete`, `publishAndGetPermalink`) are defined in Task 1 and imported with identical names in Task 2. Store selectors `getStreaming`/`getError` match `pediment-ai/chat` source. ✓

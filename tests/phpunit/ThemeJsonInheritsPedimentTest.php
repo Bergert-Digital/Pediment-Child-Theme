@@ -33,7 +33,7 @@ class ThemeJsonInheritsPedimentTest extends WP_UnitTestCase {
 
 	private function assert_child_theme_active() {
 		$this->assertSame(
-			'wp-starter-child-theme',
+			'pediment-child-theme',
 			get_stylesheet(),
 			'These Pediment-inheritance guards are only meaningful with the child theme active.'
 		);

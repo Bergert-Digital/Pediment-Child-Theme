@@ -23,21 +23,21 @@ unsuitability) is accepted and contained by gating (see below).
 ## Environment
 
 - Runs against the **child-theme wp-env at `http://localhost:8890`** — the single
-  canonical test env. It mounts the `wp-starter-ai` plugin and both themes.
+  canonical test env. It mounts the `pediment-ai` plugin and both themes.
 - That env's `.wp-env.override.json` already provides a live `ANTHROPIC_API_KEY`
   and `STARTER_AI_LOOPBACK_URL`. `STARTER_AI_MOCK` is not set and `mock_mode` is
   off, so the AI plugin uses the live Anthropic provider. **No new secret
   handling is introduced** — the test reuses the key already present in that env.
-- No new wp-env is started. Never start wp-env from `wp-starter-ai` or
-  `wp-starter-theme`.
+- No new wp-env is started. Never start wp-env from `pediment-ai` or
+  `pediment`.
 
 ## Location & gating
 
-- New standalone spec: `wp-starter-child-theme/tests/e2e/ai-page-generation.live.spec.ts`.
+- New standalone spec: `pediment-child-theme/tests/e2e/ai-page-generation.live.spec.ts`.
 - Top-level guard: `test.skip(!process.env.RUN_LIVE_AI, 'Live AI test — set RUN_LIVE_AI=1 to run')`.
   No automated runner (the default child-theme e2e run, CI) spends tokens.
 - Run explicitly with: `RUN_LIVE_AI=1 npx playwright test ai-page-generation.live`
-  from `wp-starter-child-theme`.
+  from `pediment-child-theme`.
 - The child-theme `tests/e2e/` directory has no `utils.ts`; the helpers needed
   (`login`, `openNewPage`, `openAIChatPanel`, `canvas`) are ported locally into
   this spec (or a small local helper) rather than importing across repos.
@@ -101,7 +101,7 @@ human doing the subjective quality read via the persisted page.
 - Exact chat store name/selector for the streaming flag (`STORE_NAME` from
   `editor/chat/store`, and the selector name for in-flight/streaming state).
 - Precise front-end section wrapper class names emitted by the starter blocks
-  (`starter/hero`, `starter/cta`, `starter/faq`, …) → their `.wp-block-starter-*`
+  (`pediment/hero`, `pediment/cta`, `pediment/faq`, …) → their `.wp-block-pediment-*`
   rendered classes.
 - Publish-flow selectors for the current WP 6.5 editor (Publish → confirm →
   "View Page" link).

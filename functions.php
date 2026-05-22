@@ -1,36 +1,36 @@
 <?php
 /**
- * Starter Child Theme bootstrap.
+ * Pediment Child Theme bootstrap.
  *
  * Fork target. Pediment (parent) is read-only; your blocks,
  * theme.json overrides and child-specific PHP live here.
  *
- * @package StarterChild
+ * @package PedimentChild
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! defined( 'STARTER_CHILD_DIR' ) ) {
-	define( 'STARTER_CHILD_DIR', __DIR__ );
+if ( ! defined( 'PEDIMENT_CHILD_DIR' ) ) {
+	define( 'PEDIMENT_CHILD_DIR', __DIR__ );
 }
-if ( ! defined( 'STARTER_CHILD_VERSION' ) ) {
-	define( 'STARTER_CHILD_VERSION', '0.1.0' );
+if ( ! defined( 'PEDIMENT_CHILD_VERSION' ) ) {
+	define( 'PEDIMENT_CHILD_VERSION', '0.1.0' );
 }
 
 /**
  * Register every block in the given directory (defaults to build/blocks).
  *
- * Named distinctly from the parent's starter_register_blocks() — both
+ * Named distinctly from the parent's pediment_register_blocks() — both
  * functions.php files load for a child theme, so an identical name would
  * fatal-redeclare.
  *
  * @param string|null $base_dir Directory containing block subfolders.
  */
-function starter_child_register_blocks( $base_dir = null ) {
+function pediment_child_register_blocks( $base_dir = null ) {
 	if ( null === $base_dir || '' === $base_dir ) {
-		$base_dir = STARTER_CHILD_DIR . '/build/blocks';
+		$base_dir = PEDIMENT_CHILD_DIR . '/build/blocks';
 	}
 
 	if ( ! is_dir( $base_dir ) ) {
@@ -54,7 +54,7 @@ function starter_child_register_blocks( $base_dir = null ) {
 add_action(
 	'init',
 	function () {
-		starter_child_register_blocks();
+		pediment_child_register_blocks();
 	}
 );
 
@@ -62,7 +62,7 @@ add_action(
 	'wp_enqueue_scripts',
 	function () {
 		wp_enqueue_style(
-			'starter-child',
+			'pediment-child',
 			get_stylesheet_directory_uri() . '/style.css',
 			array(),
 			wp_get_theme()->get( 'Version' )

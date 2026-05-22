@@ -21,14 +21,14 @@ export default function Edit( {
 	setAttributes: ( a: Partial< Attrs > ) => void;
 } ) {
 	const blockProps = useBlockProps( {
-		className: 'starter-child-promo-banner',
+		className: 'pediment-child-promo-banner',
 	} );
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Promo banner', 'starter-child' ) }>
+				<PanelBody title={ __( 'Promo banner', 'pediment-child' ) }>
 					<TextControl
-						label={ __( 'Link URL', 'starter-child' ) }
+						label={ __( 'Link URL', 'pediment-child' ) }
 						value={ attributes.linkUrl }
 						onChange={ ( v ) => setAttributes( { linkUrl: v } ) }
 					/>
@@ -39,19 +39,19 @@ export default function Edit( {
 					tagName="strong"
 					value={ attributes.headline }
 					onChange={ ( v ) => setAttributes( { headline: v } ) }
-					placeholder={ __( 'Headline…', 'starter-child' ) }
+					placeholder={ __( 'Headline…', 'pediment-child' ) }
 				/>
 				<RichText
 					tagName="p"
 					value={ attributes.body }
 					onChange={ ( v ) => setAttributes( { body: v } ) }
-					placeholder={ __( 'Body…', 'starter-child' ) }
+					placeholder={ __( 'Body…', 'pediment-child' ) }
 				/>
 				<RichText
 					tagName="span"
 					value={ attributes.linkText }
 					onChange={ ( v ) => setAttributes( { linkText: v } ) }
-					placeholder={ __( 'Link text…', 'starter-child' ) }
+					placeholder={ __( 'Link text…', 'pediment-child' ) }
 				/>
 			</aside>
 		</>

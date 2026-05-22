@@ -16,7 +16,7 @@ test.skip(
   'Live AI test — set RUN_LIVE_AI=1 to run (spends Anthropic tokens)',
 );
 
-// Front-end render classes emitted by starter blocks (NOT wp-block-starter-*).
+// Front-end render classes emitted by starter blocks (NOT wp-block-pediment-*).
 const SECTION_CLASSES = [
   'starter-hero',
   'starter-cta',

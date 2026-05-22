@@ -8,9 +8,9 @@
 
 **Tech Stack:** WordPress FSE child block theme, `theme.json` v2 deep-merge, `WP_Theme_JSON_Resolver::get_merged_data()`, PHPUnit (`WP_UnitTestCase`) in the child's own suite.
 
-**Scope (child repo `/Users/jonas/Entwicklung/wp-starter-child-theme` only):** `theme.json`, `README.md`, and a new `tests/phpunit/ThemeJsonInheritsPedimentTest.php`. NOT here: any parent (`wp-starter-theme`) change — the parent Pediment port (Plans 1–7) is already complete and is the source of truth; this plan only removes the child's masking layer. No child `functions.php`/blocks/style.css change.
+**Scope (child repo `/Users/jonas/Entwicklung/pediment-child-theme` only):** `theme.json`, `README.md`, and a new `tests/phpunit/ThemeJsonInheritsPedimentTest.php`. NOT here: any parent (`pediment`) change — the parent Pediment port (Plans 1–7) is already complete and is the source of truth; this plan only removes the child's masking layer. No child `functions.php`/blocks/style.css change.
 
-**Verification constraint:** The execution worktree is NOT wp-env-mounted. Per task: env-independent gates — valid JSON, `php -l`, scope diff, and a static trace of each test method against the shipped `theme.json`. Full child PHPUnit runs POST-MERGE in the **single child wp-env test base** (`:8890`/`:8891`, which mounts the child checkout + `../wp-starter-theme` parent + the AI plugin) via `npx wp-env run tests-cli … vendor/bin/phpunit` from the child repo. **Definition of done: post-merge child PHPUnit green — the new ThemeJsonInheritsPedimentTest cases prove the resolved theme palette is Pediment (accent `#0E7490`, `accent-tint` present, primary `#0A1B33`) and the body font is Plus Jakarta Sans; the existing SmokeTest/AutoLoaderTest stay green.**
+**Verification constraint:** The execution worktree is NOT wp-env-mounted. Per task: env-independent gates — valid JSON, `php -l`, scope diff, and a static trace of each test method against the shipped `theme.json`. Full child PHPUnit runs POST-MERGE in the **single child wp-env test base** (`:8890`/`:8891`, which mounts the child checkout + `../pediment` parent + the AI plugin) via `npx wp-env run tests-cli … vendor/bin/phpunit` from the child repo. **Definition of done: post-merge child PHPUnit green — the new ThemeJsonInheritsPedimentTest cases prove the resolved theme palette is Pediment (accent `#0E7490`, `accent-tint` present, primary `#0A1B33`) and the body font is Plus Jakarta Sans; the existing SmokeTest/AutoLoaderTest stay green.**
 
 ---
 
@@ -38,7 +38,7 @@
  * Guards that the child theme does NOT mask the parent's Pediment tokens.
  *
  * Runs in the child wp-env base (:8890/:8891), which mounts this child
- * checkout plus ../wp-starter-theme (the parent). With the child theme
+ * checkout plus ../pediment (the parent). With the child theme
  * active and no `settings` block in the child theme.json, the resolved
  * global settings must be the parent's Pediment palette/typography.
  */
@@ -181,7 +181,7 @@ Then `git show --stat HEAD` — confirm only `theme.json` is in the commit.
 ## Overriding the Pediment design per client
 
 This child theme ships **no `theme.json` `settings`** on purpose: it inherits
-the parent (`wp-starter-theme`) Pediment design system as-is — Deep Cyan
+the parent (`pediment`) Pediment design system as-is — Deep Cyan
 accent, Plus Jakarta Sans, the navy/surface palette. Child-theme sites get the
 locked look with zero configuration.
 
@@ -268,9 +268,9 @@ Expected: `True`
 
 - `theme.json` has no `settings` ⇒ `ThemeJsonInheritsPedimentTest::test_child_theme_json_declares_no_settings_override` passes.
 - The child declares no palette/typography ⇒ `WP_Theme_JSON_Resolver::get_merged_data()` theme origin is the parent Pediment ⇒ the two inheritance tests assert `#0E7490` / `#0A1B33` / `accent-tint` / `Plus Jakarta Sans`.
-- SmokeTest (active theme = `wp-starter-child-theme`, template = `wp-starter-theme`) and AutoLoaderTest (`starter_child_register_blocks`) are untouched and unaffected.
+- SmokeTest (active theme = `pediment-child-theme`, template = `pediment`) and AutoLoaderTest (`pediment_child_register_blocks`) are untouched and unaffected.
 
-**Post-merge (child checkout, controller — NOT a worktree step):** from `/Users/jonas/Entwicklung/wp-starter-child-theme`, run the child suite in its own wp-env base (the single test base, `:8890`/`:8891`, which mounts the child + `../wp-starter-theme` + AI plugin): `npx wp-env run tests-cli --env-cwd=wp-content/themes/wp-starter-child-theme vendor/bin/phpunit`. Expect: all green — the 3 new ThemeJsonInheritsPedimentTest cases plus the existing SmokeTest/AutoLoaderTest. (If the test-base container path differs, the established invocation for this repo is whatever `composer test` maps to inside `tests-cli`; the assertion target is the same: child resolves to Pediment.)
+**Post-merge (child checkout, controller — NOT a worktree step):** from `/Users/jonas/Entwicklung/pediment-child-theme`, run the child suite in its own wp-env base (the single test base, `:8890`/`:8891`, which mounts the child + `../pediment` + AI plugin): `npx wp-env run tests-cli --env-cwd=wp-content/themes/pediment-child-theme vendor/bin/phpunit`. Expect: all green — the 3 new ThemeJsonInheritsPedimentTest cases plus the existing SmokeTest/AutoLoaderTest. (If the test-base container path differs, the established invocation for this repo is whatever `composer test` maps to inside `tests-cli`; the assertion target is the same: child resolves to Pediment.)
 
 ---
 

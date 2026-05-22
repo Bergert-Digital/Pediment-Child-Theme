@@ -19,7 +19,7 @@ require_once $_tests_dir . '/includes/functions.php';
 tests_add_filter(
 	'muplugins_loaded',
 	function () {
-		switch_theme( 'wp-starter-child-theme' );
+		switch_theme( 'pediment-child-theme' );
 	}
 );
 

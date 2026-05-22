@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="Starter Child Theme">
-  <description>Coding standards for wp-starter-child-theme.</description>
+<ruleset name="Pediment Child Theme">
+  <description>Coding standards for pediment-child-theme.</description>
 
   <file>functions.php</file>
   <file>src/blocks/</file>

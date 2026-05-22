@@ -57,7 +57,7 @@ async function openSidebarTab(page: Page, tab: 'edit-post/document' | 'edit-post
  * conversation asynchronously via REST after the post has an id, so sending
  * immediately after the panel renders is a race: the message vanishes with no
  * optimistic echo. Block until the editor has a post id and the
- * `starter-ai/chat` store holds the conversation for that post.
+ * `pediment-ai/chat` store holds the conversation for that post.
  */
 export async function openAIChatPanel(page: Page) {
   await openSidebarTab(page, 'edit-post/document');
@@ -73,7 +73,7 @@ export async function openAIChatPanel(page: Page) {
     () => {
       const wp = (window as any).wp;
       const postId = wp?.data?.select?.('core/editor')?.getCurrentPostId?.();
-      const conv = wp?.data?.select?.('starter-ai/chat')?.getConversation?.();
+      const conv = wp?.data?.select?.('pediment-ai/chat')?.getConversation?.();
       return !!postId && !!conv && conv.post_id === postId;
     },
     undefined,
@@ -85,7 +85,7 @@ export async function openAIChatPanel(page: Page) {
 
 /**
  * Waits for the live, non-deterministic streaming turn to finish. The
- * `starter-ai/chat` store sets `getStreaming()` back to null when the turn
+ * `pediment-ai/chat` store sets `getStreaming()` back to null when the turn
  * completes or is cleared. Throws if the store reports an error.
  *
  * @param timeoutMs generous default to absorb multi-round agentic tool use.
@@ -95,7 +95,7 @@ export async function waitForChatTurnComplete(page: Page, timeoutMs = 120_000) {
   // don't pass instantly on the initial null state before the POST fires.
   await page.waitForFunction(
     () => {
-      const s = (window as any).wp?.data?.select?.('starter-ai/chat');
+      const s = (window as any).wp?.data?.select?.('pediment-ai/chat');
       return !!s && s.getStreaming() !== null;
     },
     undefined,
@@ -104,7 +104,7 @@ export async function waitForChatTurnComplete(page: Page, timeoutMs = 120_000) {
 
   await page.waitForFunction(
     () => {
-      const s = (window as any).wp?.data?.select?.('starter-ai/chat');
+      const s = (window as any).wp?.data?.select?.('pediment-ai/chat');
       if (!s) return false;
       if (s.getError()) return true; // resolve; caller inspects error after
       return s.getStreaming() === null;
@@ -114,7 +114,7 @@ export async function waitForChatTurnComplete(page: Page, timeoutMs = 120_000) {
   );
 
   const err = await page.evaluate(
-    () => (window as any).wp?.data?.select?.('starter-ai/chat')?.getError() ?? null,
+    () => (window as any).wp?.data?.select?.('pediment-ai/chat')?.getError() ?? null,
   );
   if (err) throw new Error(`AI chat turn errored: ${err}`);
 }
