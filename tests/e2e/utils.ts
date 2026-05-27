@@ -23,14 +23,29 @@ export async function login(page: Page) {
   await page.waitForURL(/wp-admin/);
 }
 
+/**
+ * Dismiss any modal dialogs the editor pops on a fresh-page load. Block themes
+ * can show the "Welcome to the editor" guide, and — when the active theme
+ * registers patterns with `blockTypes: ['core/post-content']` — the "Choose a
+ * pattern" picker. Both appear AFTER the editor iframe mounts, so callers
+ * must wait for the iframe before invoking this. Escape works for every WP
+ * dialog and avoids enumerating per-dialog close-button selectors.
+ */
+async function dismissEditorDialogs(page: Page) {
+  for (let i = 0; i < 5; i++) {
+    if (!(await page.getByRole('dialog').count())) return;
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(150);
+  }
+}
+
 export async function openNewPage(page: Page, title: string) {
   await page.goto('/wp-admin/post-new.php?post_type=page');
-  const closeBtn = page.getByRole('button', { name: /close dialog|close/i });
-  if (await closeBtn.count()) { await closeBtn.first().click().catch(() => {}); }
   await page
     .locator('iframe[name="editor-canvas"], .editor-post-title__input')
     .first()
     .waitFor({ timeout: 20_000 });
+  await dismissEditorDialogs(page);
   const scope = await canvas(page);
   const titleField = scope
     .locator('.editor-post-title__input, [aria-label*="Add title" i], [placeholder*="Add title" i]')
