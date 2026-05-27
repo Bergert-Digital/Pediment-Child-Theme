@@ -29,24 +29,30 @@ const here = dirname(fileURLToPath(import.meta.url));
 const wpEnvPath = resolve(here, '..', '.wp-env.json');
 
 // Each dep is pinned by a named release-asset URL:
-//   https://github.com/<owner>/<repo>/releases/download/v<X.Y.Z>/<asset>-<X.Y.Z>.zip
+//   https://github.com/<owner>/<repo>/releases/download/v<X.Y.Z>/<asset>.zip
 //
-// We use the release-asset form (not GitHub's auto-zipball
-// /archive/refs/tags/v<X.Y.Z>.zip) because wp-env derives a cache directory
-// from the URL basename and then strips trailing numeric segments
-// (`/\.(\d+\.)*\d+$/`). Two zipballs named `v0.1.2.zip` and `v0.1.4.zip`
-// both collapse to `v0`, causing the two downloads to race on the same
-// cache files and intermittently fail with ENOENT. Distinct asset
-// prefixes (`pediment-` / `pediment-ai-`) keep the cache keys separate.
+// The asset filename is intentionally version-less:
+//   1) wp-env derives both its cache-dir name AND the mounted theme/plugin
+//      slug from the URL basename (after stripping trailing numeric segments
+//      via `/\.(\d+\.)*\d+$/`). A versioned filename like `pediment-0.1.2.zip`
+//      collapses to the basename `pediment-0`, which is then exposed as
+//      `wp-content/themes/pediment-0/` — breaking this child theme's
+//      `Template: pediment` reference. Dropping the version keeps the
+//      basename equal to the slug the consumer expects.
+//   2) GitHub's auto-zipball (`/archive/refs/tags/v<X.Y.Z>.zip`) hits the
+//      same strip-to-`v0` problem and additionally races two downloads onto
+//      the same cache key when more than one dep is consumed.
+// The version still travels in the URL path (`/v<X.Y.Z>/`), so the check
+// tool can read it for currency comparison.
 function releaseAssetUrl(repo, asset, version) {
-	return `https://github.com/${repo}/releases/download/v${version}/${asset}-${version}.zip`;
+	return `https://github.com/${repo}/releases/download/v${version}/${asset}.zip`;
 }
 
 function releaseAssetMatcher(repo, asset) {
 	const escapedRepo = repo.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 	const escapedAsset = asset.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 	return new RegExp(
-		`^https://github\\.com/${escapedRepo}/releases/download/v[^/]+/${escapedAsset}-([^/]+)\\.zip$`,
+		`^https://github\\.com/${escapedRepo}/releases/download/v([^/]+)/${escapedAsset}\\.zip$`,
 		'i',
 	);
 }
