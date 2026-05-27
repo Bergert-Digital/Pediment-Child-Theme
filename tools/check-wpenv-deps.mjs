@@ -28,24 +28,27 @@ import process from 'node:process';
 const here = dirname(fileURLToPath(import.meta.url));
 const wpEnvPath = resolve(here, '..', '.wp-env.json');
 
-// Each dep is pinned by an auto-zipball URL of a git tag:
-//   https://github.com/<owner>/<repo>/archive/refs/tags/v<X.Y.Z>.zip
+// Each dep is pinned by a named release-asset URL:
+//   https://github.com/<owner>/<repo>/releases/download/v<X.Y.Z>/<asset>-<X.Y.Z>.zip
 //
-// We use the tag-archive form (rather than a release-asset URL) because:
-//   1) Private-repo release-asset URLs require an API-flavored URL with an
-//      opaque asset_id, which is unbumpable and ugly.
-//   2) Both upstream release workflows force-commit the built output
-//      (parent: build/ ; plugin: build/+vendor/) into the tag commit, so
-//      the auto-zipball is a functioning installable theme/plugin.
-// The check tool just compares the version in the URL to the latest tag
-// on GitHub.
-function archiveTagUrl(repo, version) {
-	return `https://github.com/${repo}/archive/refs/tags/v${version}.zip`;
+// We use the release-asset form (not GitHub's auto-zipball
+// /archive/refs/tags/v<X.Y.Z>.zip) because wp-env derives a cache directory
+// from the URL basename and then strips trailing numeric segments
+// (`/\.(\d+\.)*\d+$/`). Two zipballs named `v0.1.2.zip` and `v0.1.4.zip`
+// both collapse to `v0`, causing the two downloads to race on the same
+// cache files and intermittently fail with ENOENT. Distinct asset
+// prefixes (`pediment-` / `pediment-ai-`) keep the cache keys separate.
+function releaseAssetUrl(repo, asset, version) {
+	return `https://github.com/${repo}/releases/download/v${version}/${asset}-${version}.zip`;
 }
 
-function archiveTagMatcher(repo) {
-	const escaped = repo.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-	return new RegExp(`^https://github\\.com/${escaped}/archive/refs/tags/v([^"]+)\\.zip$`, 'i');
+function releaseAssetMatcher(repo, asset) {
+	const escapedRepo = repo.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	const escapedAsset = asset.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	return new RegExp(
+		`^https://github\\.com/${escapedRepo}/releases/download/v[^/]+/${escapedAsset}-([^/]+)\\.zip$`,
+		'i',
+	);
 }
 
 const DEPS = [
@@ -53,15 +56,17 @@ const DEPS = [
 		field: 'themes',
 		label: 'parent theme',
 		repo: 'Bergert-Digital/pediment',
-		match: archiveTagMatcher('Bergert-Digital/pediment'),
-		buildUrl: (v) => archiveTagUrl('Bergert-Digital/pediment', v),
+		asset: 'pediment',
+		match: releaseAssetMatcher('Bergert-Digital/pediment', 'pediment'),
+		buildUrl: (v) => releaseAssetUrl('Bergert-Digital/pediment', 'pediment', v),
 	},
 	{
 		field: 'plugins',
 		label: 'pediment-ai plugin',
 		repo: 'Bergert-Digital/pediment-ai',
-		match: archiveTagMatcher('Bergert-Digital/pediment-ai'),
-		buildUrl: (v) => archiveTagUrl('Bergert-Digital/pediment-ai', v),
+		asset: 'pediment-ai',
+		match: releaseAssetMatcher('Bergert-Digital/pediment-ai', 'pediment-ai'),
+		buildUrl: (v) => releaseAssetUrl('Bergert-Digital/pediment-ai', 'pediment-ai', v),
 	},
 ];
 

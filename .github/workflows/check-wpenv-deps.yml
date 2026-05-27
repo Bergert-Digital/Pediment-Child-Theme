@@ -52,8 +52,8 @@ jobs:
             const fs = require("fs");
             const path = ".wp-env.json";
             const j = JSON.parse(fs.readFileSync(path, "utf8"));
-            const isParent = (u) => typeof u === "string" && /^https:\/\/github\.com\/Bergert-Digital\/pediment\/archive\/refs\/tags\//i.test(u);
-            const isPlugin = (u) => typeof u === "string" && /^https:\/\/github\.com\/Bergert-Digital\/pediment-ai\/archive\/refs\/tags\//i.test(u);
+            const isParent = (u) => typeof u === "string" && /^https:\/\/github\.com\/Bergert-Digital\/pediment\/releases\/download\//i.test(u);
+            const isPlugin = (u) => typeof u === "string" && /^https:\/\/github\.com\/Bergert-Digital\/pediment-ai\/releases\/download\//i.test(u);
             j.themes  = j.themes.map(t  => isParent(t) ? process.env.PARENT_URL : t);
             j.plugins = j.plugins.map(p => isPlugin(p) ? process.env.PLUGIN_URL : p);
             fs.writeFileSync(path, JSON.stringify(j, null, 2) + "\n");
