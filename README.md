@@ -67,14 +67,36 @@ Then **replace or delete** `src/blocks/promo-banner/` — it's a worked example,
 
 ## Development
 
-All three repos cloned side by side (`../pediment`, `../pediment-ai`):
+`.wp-env.json` is configured for the **agency-dev workflow**: it points at the latest tagged release of `Bergert-Digital/pediment` (parent) and `Bergert-Digital/pediment-ai` (plugin) on GitHub. Running `npm run env:start` downloads those release zips into the container — no local clone of parent/plugin required, no auth required (both are public repos).
 
 ```bash
 composer install
 npm install
-npm run env:start          # wp-env, mounts parent + plugin from siblings
-npm run build              # build blocks
-npm run e2e                # Playwright
+npm run env:start            # wp-env downloads parent + plugin from GitHub releases
+npm run build                # build child blocks
+npm run e2e                  # Playwright
 npx wp-env run tests-wordpress --env-cwd=wp-content/themes/pediment-child-theme vendor/bin/phpunit
 composer lint
+npm run check:wpenv-deps     # verify .wp-env.json refs are at latest upstream tags
+```
+
+### Working against sibling clones of the parent / plugin
+
+If you've cloned `../pediment` and `../pediment-ai` next to this repo and want `wp-env` to use those working copies instead of the published release tags (for parallel development across the three repos), drop a `.wp-env.override.json` next to `.wp-env.json`:
+
+```json
+{
+  "themes": [".", "../pediment"],
+  "plugins": ["../pediment-ai"]
+}
+```
+
+The file is gitignored. `wp-env` merges it over `.wp-env.json`, so the released refs become irrelevant for your local runs. CI uses the same trick — see [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+
+### Keeping `.wp-env.json` current
+
+A scheduled workflow ([`.github/workflows/check-wpenv-deps.yml`](.github/workflows/check-wpenv-deps.yml)) runs every Monday, checks the upstream repos for newer tags, and opens a PR bumping the refs when they fall behind. You can also run the check manually any time:
+
+```bash
+npm run check:wpenv-deps
 ```

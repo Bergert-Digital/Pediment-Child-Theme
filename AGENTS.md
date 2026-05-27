@@ -1,0 +1,94 @@
+# AGENTS.md — pediment-child-theme
+
+Project-level agent instructions for this child theme. User-level `~/.claude/CLAUDE.md`
+and explicit user requests take precedence over this file.
+
+## What this project is
+
+A **child theme** of the [Pediment](https://github.com/bergert/pediment) FSE block theme.
+The parent ships as an installed WordPress theme (zip) — you do **not** edit it. The
+optional [`pediment-ai`](https://github.com/bergert/pediment-ai) plugin is installed
+separately. The full stack on a running site:
+
+```
+WordPress + parent theme (pediment, installed)        ← framework defaults, READ-ONLY
+                       + this child theme (active)    ← per-client overrides, your working surface
+                       + pediment-ai plugin (optional)
+```
+
+**Everything you change lives in this repo.** The parent is a dependency, like a
+JavaScript package — you read it for reference and override what you need from the child.
+
+To inspect parent defaults, read the installed files in your local WordPress at
+`wp-content/themes/pediment/theme.json` (and `…/assets/css/theme.css`, `…/build/blocks/`).
+Or browse the source on GitHub: <https://github.com/bergert/pediment>.
+
+## Hard rules
+
+- **Don't modify the installed parent theme.** Treat `wp-content/themes/pediment/` as
+  read-only software. If a framework default needs changing, file an issue or PR against
+  `bergert/pediment` upstream — not part of your day-to-day workflow.
+- **Extend Brand Settings via filters**, not by patching parent files. Use the
+  `pediment_brand_fields` and `pediment_brand_sections` filters in this child's
+  `functions.php`.
+- **Stick to WordPress standards.** Prefer official APIs (hooks, filters, block APIs)
+  over custom solutions.
+- **No color literals in custom block CSS.** Use `var(--wp--preset--…)` tokens declared
+  in `theme.json`.
+- **`theme.json` merge is per-subtree, not per-slug.** A declared `palette` /
+  `fontFamilies` array **replaces** the parent's wholesale — slugs you omit disappear
+  from the site (including `accent-tint`). When you fork a subtree, copy the parent's
+  full version (from the installed `wp-content/themes/pediment/theme.json`) and change
+  only the leaves you mean to. See [README.md](./README.md) for the exact rules.
+- **Don't validate for scenarios that can't happen.** Delete unreachable defensive code
+  rather than "polishing" it.
+
+## Where to make changes
+
+Read [docs/STYLING.md](./docs/STYLING.md) first — it's the decision tree for "which
+layer owns this?" Short version:
+
+| Scope | Layer | How |
+|---|---|---|
+| Per-page / per-template content | **DB** | Site Editor (Appearance → Editor) |
+| Per-client design override (color, type scale, etc.) | **Child** | `theme.json` in this repo |
+| Site-specific CSS rule | **Child** | `theme.json` `styles.css`, or a stylesheet enqueued from `functions.php` |
+| New client-specific block | **Child** | `src/blocks/<block>/` (worked example: `src/blocks/promo-banner/`) |
+| Framework default (every Pediment site should get it) | **Upstream** | File an issue/PR against `bergert/pediment` on GitHub |
+| Bug in a Pediment-shipped block | **Upstream** | Same |
+
+## Environment
+
+- **Local dev: wp-env at `localhost:8890`**, started from this directory. See
+  [README.md](./README.md) for setup. `.wp-env.json` ships zip-URL pins for the parent
+  and plugin (the auto-zipballs of each repo's latest tag); `wp-env` downloads those on
+  `env:start`. Both upstream repos are public — no auth required.
+- **Working against sibling parent/plugin clones:** drop a `.wp-env.override.json` (gitignored) pointing
+  at `../pediment` and `../pediment-ai`. See README's "Working against sibling clones"
+  section. CI does the same thing automatically.
+- **Do not** start a separate wp-env from anywhere else for this site — that creates a
+  second, mis-configured instance.
+- **Keeping refs current:** `npm run check:wpenv-deps` verifies `.wp-env.json` is pinned
+  to the latest upstream tag. A scheduled workflow opens a bump PR weekly; you can also
+  run the check manually before opening any PR.
+- PHP 8.1+, WordPress 6.9+. `@wordpress/scripts` build (`npm run build` → `build/blocks/`).
+
+## Verifying work
+
+1. `composer lint` · `npm run lint:js` · `npm run lint:blocks` · `npm run lint:colors`
+2. PHPUnit:
+   `npx wp-env run tests-wordpress --env-cwd=wp-content/themes/pediment-child-theme vendor/bin/phpunit`
+3. Playwright: `npm run e2e`
+4. **Visual / CSS changes** — DevTools → Computed is the only authoritative check. Curling
+   the page and grepping inline `<style>` blocks tells you whether a rule was emitted, not
+   whether it wins the cascade. After a `theme.json` edit, run
+   `wp transient delete --all` (or bump `Version:` in `style.css`) so WP re-parses.
+
+No success claims without running the relevant command (or, for visual work, viewing the
+DevTools computed value) and seeing it pass.
+
+## Commits & pushes
+
+Conventional commits, imperative, ≤60-char summary, stage files by name (never
+`git add -A`), include the `Co-Authored-By` trailer. `git push` and any `gh` remote action
+require explicit user go-ahead — show the exact command and stop.

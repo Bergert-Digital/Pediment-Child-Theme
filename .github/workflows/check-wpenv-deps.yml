@@ -1,0 +1,82 @@
+name: Check wp-env dependencies
+
+# Verifies that the `Bergert-Digital/pediment#…` and `Bergert-Digital/pediment-ai#…`
+# refs in `.wp-env.json` still point at the latest upstream tag.
+#
+# Runs every Monday morning and opens a PR bumping the refs when out of date.
+# Also runnable on-demand via the Actions UI.
+
+on:
+  schedule:
+    - cron: '0 7 * * 1' # Monday 07:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check current refs
+        id: check
+        env:
+          GITHUB_TOKEN: ${{ secrets.STARTER_THEME_PAT }}
+        run: |
+          set -o pipefail
+          report=$(node tools/check-wpenv-deps.mjs --json) || rc=$?
+          echo "$report"
+          # rc=0 (current) or rc=1 (outdated). Anything else is a hard error.
+          if [ "${rc:-0}" -eq 2 ]; then exit 2; fi
+          echo "outdated=${rc:-0}" >> "$GITHUB_OUTPUT"
+          # Capture the latest version + URL for each dep so the next step can patch .wp-env.json
+          echo "parent_version=$(echo "$report" | jq -r '.report[] | select(.repo=="Bergert-Digital/pediment") | .latest')" >> "$GITHUB_OUTPUT"
+          echo "parent_url=$(echo "$report"     | jq -r '.report[] | select(.repo=="Bergert-Digital/pediment") | .latestUrl')" >> "$GITHUB_OUTPUT"
+          echo "plugin_version=$(echo "$report" | jq -r '.report[] | select(.repo=="Bergert-Digital/pediment-ai") | .latest')" >> "$GITHUB_OUTPUT"
+          echo "plugin_url=$(echo "$report"     | jq -r '.report[] | select(.repo=="Bergert-Digital/pediment-ai") | .latestUrl')" >> "$GITHUB_OUTPUT"
+
+      - name: Bump .wp-env.json
+        if: steps.check.outputs.outdated == '1'
+        env:
+          PARENT_URL: ${{ steps.check.outputs.parent_url }}
+          PLUGIN_URL: ${{ steps.check.outputs.plugin_url }}
+        run: |
+          node -e '
+            const fs = require("fs");
+            const path = ".wp-env.json";
+            const j = JSON.parse(fs.readFileSync(path, "utf8"));
+            const isParent = (u) => typeof u === "string" && /^https:\/\/github\.com\/Bergert-Digital\/pediment\/archive\/refs\/tags\//i.test(u);
+            const isPlugin = (u) => typeof u === "string" && /^https:\/\/github\.com\/Bergert-Digital\/pediment-ai\/archive\/refs\/tags\//i.test(u);
+            j.themes  = j.themes.map(t  => isParent(t) ? process.env.PARENT_URL : t);
+            j.plugins = j.plugins.map(p => isPlugin(p) ? process.env.PLUGIN_URL : p);
+            fs.writeFileSync(path, JSON.stringify(j, null, 2) + "\n");
+          '
+
+      - name: Open PR
+        if: steps.check.outputs.outdated == '1'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.STARTER_THEME_PAT }}
+          branch: chore/bump-wpenv-deps
+          delete-branch: true
+          title: 'chore(wp-env): bump parent/plugin refs to latest tags'
+          body: |
+            Automated bump of `.wp-env.json` refs.
+
+            - `Bergert-Digital/pediment` → `v${{ steps.check.outputs.parent_version }}`
+            - `Bergert-Digital/pediment-ai` → `v${{ steps.check.outputs.plugin_version }}`
+
+            Verify the new versions work locally (`npm run env:start`, smoke-test
+            a couple of pages) before merging.
+          commit-message: |
+            chore(wp-env): bump parent/plugin refs to latest tags
+          labels: |
+            dependencies
+            automated

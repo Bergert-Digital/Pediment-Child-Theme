@@ -62,6 +62,11 @@ jobs:
         run: cd pediment-ai && composer install --prefer-dist --no-progress && npm ci && npm run build
       - name: Install child deps
         run: cd pediment-child-theme && composer install --prefer-dist --no-progress && npm ci
+      - name: Point wp-env at locally-checked-out parent + plugin
+        run: |
+          cat > pediment-child-theme/.wp-env.override.json <<'JSON'
+          { "themes": [".", "../pediment"], "plugins": ["../pediment-ai"] }
+          JSON
       - name: Start wp-env
         run: cd pediment-child-theme && npm run env:start
       - name: Build child blocks
@@ -102,6 +107,11 @@ jobs:
       - run: cd pediment-ai && composer install --prefer-dist --no-progress && npm ci && npm run build
       - run: cd pediment-child-theme && npm ci
       - run: cd pediment-child-theme && npx playwright install --with-deps chromium
+      - name: Point wp-env at locally-checked-out parent + plugin
+        run: |
+          cat > pediment-child-theme/.wp-env.override.json <<'JSON'
+          { "themes": [".", "../pediment"], "plugins": ["../pediment-ai"] }
+          JSON
       - run: cd pediment-child-theme && npm run env:start
       - run: cd pediment-child-theme && npm run build
       - run: cd pediment-child-theme && npx wp-env run cli wp theme activate pediment-child-theme
