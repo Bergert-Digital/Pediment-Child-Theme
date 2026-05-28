@@ -72,7 +72,7 @@ Then **replace or delete** `src/blocks/promo-banner/` — it's a worked example,
 ```bash
 composer install
 npm install
-npm run env:start            # wp-env downloads parent + plugin from GitHub releases
+npm run env:setup            # boots wp-env, activates this child, seeds demo content
 npm run build                # build child blocks
 npm run e2e                  # Playwright
 npx wp-env run tests-wordpress --env-cwd=wp-content/themes/pediment-child-theme vendor/bin/phpunit
