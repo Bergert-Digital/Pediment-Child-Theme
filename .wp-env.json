@@ -8,6 +8,8 @@
   "config": {
     "WP_DEBUG": true,
     "WP_DEBUG_LOG": true,
-    "SCRIPT_DEBUG": true
+    "WP_DEBUG_DISPLAY": false,
+    "SCRIPT_DEBUG": true,
+    "PEDIMENT_AI_LOOPBACK_URL": "http://127.0.0.1"
   }
 }

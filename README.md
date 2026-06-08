@@ -80,18 +80,18 @@ composer lint
 npm run check:wpenv-deps     # verify .wp-env.json refs are at latest upstream tags
 ```
 
-### Working against sibling clones of the parent / plugin
+### Dev mode vs. publish mode
 
-If you've cloned `../pediment` and `../pediment-ai` next to this repo and want `wp-env` to use those working copies instead of the published release tags (for parallel development across the three repos), drop a `.wp-env.override.json` next to `.wp-env.json`:
+The committed `.wp-env.json` always pins the published release zips (**publish mode**) — that's the push-ready config and the one CI's currency check validates. For parallel development across the three repos, switch to **dev mode**, which mounts the sibling working copies (`../pediment`, `../pediment-ai`) instead:
 
-```json
-{
-  "themes": [".", "../pediment"],
-  "plugins": ["../pediment-ai"]
-}
+```bash
+npm run env:dev          # mount sibling working copies (fast local iteration)
+npm run env:publish      # back to the committed release-zip pins
+npm run env:mode         # report which mode is active
+npm run env:start        # restart to apply (required after switching)
 ```
 
-The file is gitignored. `wp-env` merges it over `.wp-env.json`, so the released refs become irrelevant for your local runs. CI uses the same trick — see [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+These commands only toggle `themes`/`plugins` in `.wp-env.override.json` (gitignored; other keys like `ANTHROPIC_API_KEY` are preserved). Because the dev paths live only in the override, **the committed `.wp-env.json` can never accidentally pick up local paths — every push is publish-ready by default.** `wp-env` fully replaces the base `themes`/`plugins` arrays with the override's. CI uses the same trick — see [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 ### Keeping `.wp-env.json` current
 

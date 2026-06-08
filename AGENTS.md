@@ -63,9 +63,12 @@ layer owns this?" Short version:
   [README.md](./README.md) for setup. `.wp-env.json` ships zip-URL pins for the parent
   and plugin (the auto-zipballs of each repo's latest tag); `wp-env` downloads those on
   `env:start`. Both upstream repos are public — no auth required.
-- **Working against sibling parent/plugin clones:** drop a `.wp-env.override.json` (gitignored) pointing
-  at `../pediment` and `../pediment-ai`. See README's "Working against sibling clones"
-  section. CI does the same thing automatically.
+- **Dev mode vs. publish mode:** `npm run env:dev` mounts the sibling `../pediment` /
+  `../pediment-ai` working copies; `npm run env:publish` reverts to the committed release-zip
+  pins; `npm run env:mode` reports the active mode. These only toggle `themes`/`plugins` in
+  the gitignored `.wp-env.override.json`, so the committed `.wp-env.json` stays push-ready by
+  definition. Restart with `env:start` after switching. See README's "Dev mode vs. publish
+  mode" section. CI does the override trick automatically.
 - **Do not** start a separate wp-env from anywhere else for this site — that creates a
   second, mis-configured instance.
 - **Keeping refs current:** `npm run check:wpenv-deps` verifies `.wp-env.json` is pinned

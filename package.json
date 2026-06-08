@@ -10,6 +10,9 @@
     "env:start": "wp-env start",
     "env:setup": "node tools/setup-env.mjs",
     "env:stop": "wp-env stop",
+    "env:dev": "node tools/wp-env-mode.mjs dev",
+    "env:publish": "node tools/wp-env-mode.mjs publish",
+    "env:mode": "node tools/wp-env-mode.mjs status",
     "check:wpenv-deps": "node tools/check-wpenv-deps.mjs"
   },
   "devDependencies": {
