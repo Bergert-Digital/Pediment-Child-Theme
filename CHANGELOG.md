@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.1](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.2.0...v0.2.1) (2026-06-11)
+
+
+### Bug Fixes
+
+* **deps:** force shell-quote &gt;=1.8.4 to clear critical advisory ([1a573ed](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/1a573ed37f7a22c5e5ea8146869f918da1007742))
+* **e2e:** close 'Choose a pattern' starter modal before publishing ([02212a6](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/02212a6bfffdb478a073dacfece8445f885eade9))
+* **e2e:** skip update checks in local/dev env; bump CI retries to 2 ([7801314](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/7801314a810b59e0c2da348a36a1862124faae45))
+
 ## [0.2.0](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.1.0...v0.2.0) (2026-06-11)
 
 
