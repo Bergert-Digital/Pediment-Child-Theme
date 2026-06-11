@@ -5,3 +5,15 @@
 node_modules
 test-results
 playwright-report
+src
+tests
+tools
+docs
+playwright.config.ts
+tsconfig.json
+package.json
+package-lock.json
+phpcs.xml.dist
+phpunit.xml.dist
+composer.json
+composer.lock
