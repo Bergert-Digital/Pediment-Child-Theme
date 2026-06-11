@@ -1,4 +1,4 @@
-import { Page, FrameLocator } from '@playwright/test';
+import { Page, FrameLocator, expect } from '@playwright/test';
 
 /**
  * Returns a locator scope for the editor canvas — the iframe in WP 6.5+ block
@@ -147,24 +147,40 @@ export async function waitForChatTurnComplete(page: Page, timeoutMs = 120_000) {
  * matching the e2e URL convention used elsewhere in this project.
  */
 export async function publishAndGetPermalink(page: Page): Promise<string> {
-  // Top-bar Publish button.
-  await page.getByRole('button', { name: /^Publish$/i }).first().click();
+  // Single-click publish: disable the pre-publish confirmation panel so there is
+  // no second, animation-gated click to race.
+  await page.evaluate(() => {
+    (window as any).wp?.data?.dispatch?.('core/editor')?.disablePublishSidebar?.();
+  });
 
-  // Publish confirmation panel.
-  const panel = page.locator('.editor-post-publish-panel');
-  await panel.waitFor({ state: 'visible', timeout: 15_000 });
-  await panel.getByRole('button', { name: /^Publish$/i }).first().click();
-
-  // Wait until the editor reports the post as actually published, so the post
-  // id is assigned and stable before we build the URL.
-  await page.waitForFunction(
-    () => {
-      const ed = (window as any).wp?.data?.select?.('core/editor');
-      return !!ed && !!ed.getCurrentPostId() && ed.getEditedPostAttribute('status') === 'publish';
-    },
-    undefined,
-    { timeout: 15_000 },
-  );
+  // Root cause of historical flakiness: this theme registers post-content
+  // patterns, so the editor pops a "Choose a pattern" starter modal a beat after
+  // a new page mounts. While open it sets the editor background to aria-hidden,
+  // which removes the toolbar — including the Publish button — from the
+  // accessibility tree, so `getByRole('button', { name: 'Publish' })` never
+  // resolves and the click hangs until timeout. The modal can appear (or
+  // re-appear) at any point, so retry the dismiss -> publish -> confirm sequence
+  // until the editor reports the post published.
+  const starterModal = page.getByRole('dialog', { name: /choose a pattern/i });
+  await expect(async () => {
+    // This modal ignores Escape, so close it via its explicit Close button.
+    if (await starterModal.isVisible().catch(() => false)) {
+      await starterModal
+        .getByRole('button', { name: /^close$/i })
+        .click({ timeout: 2_000 })
+        .catch(() => {});
+      await starterModal.waitFor({ state: 'hidden', timeout: 3_000 }).catch(() => {});
+    }
+    await page.getByRole('button', { name: /^Publish$/i }).first().click({ timeout: 5_000 });
+    await page.waitForFunction(
+      () => {
+        const ed = (window as any).wp?.data?.select?.('core/editor');
+        return !!ed && ed.getEditedPostAttribute('status') === 'publish';
+      },
+      undefined,
+      { timeout: 8_000 },
+    );
+  }).toPass({ timeout: 60_000 });
 
   const id = await page.evaluate(
     () => (window as any).wp.data.select('core/editor').getCurrentPostId() as number,
