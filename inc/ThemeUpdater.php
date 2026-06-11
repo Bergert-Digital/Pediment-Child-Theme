@@ -31,6 +31,14 @@ final class ThemeUpdater {
 			return;
 		}
 
+		// Skip update checks in local/dev environments (wp-env, CI). There is no
+		// point hitting the GitHub API on every admin load there, and the
+		// synchronous check slows the block editor enough to flake e2e tests.
+		// Real client sites default to the 'production' environment type.
+		if ( function_exists( 'wp_get_environment_type' ) && 'local' === wp_get_environment_type() ) {
+			return;
+		}
+
 		// get_stylesheet_directory(): the active theme dir — here, the child.
 		// Slug must equal the theme folder name (pediment-child-theme) so WP
 		// matches the update to the installed theme.
