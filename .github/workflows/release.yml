@@ -49,6 +49,15 @@ jobs:
           node-version: '20'
           cache: npm
 
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer:v2
+          coverage: none
+
+      - name: Install Composer prod deps (PUC) into vendor/
+        run: composer install --no-dev --optimize-autoloader --prefer-dist --no-progress
+
       - name: Build JS bundle
         run: |
           npm ci
@@ -85,11 +94,11 @@ jobs:
           STAGE="$(mktemp -d)/pediment-child-theme"
           mkdir -p "$STAGE"
           rsync -a --exclude-from=.distignore ./ "$STAGE/"
-          ( cd "$(dirname "$STAGE")" && zip -rq "$GITHUB_WORKSPACE/pediment-child-theme-$VERSION.zip" pediment-child-theme )
-          unzip -l "pediment-child-theme-$VERSION.zip" | tail -5
+          ( cd "$(dirname "$STAGE")" && zip -rq "$GITHUB_WORKSPACE/pediment-child-theme.zip" pediment-child-theme )
+          unzip -l "pediment-child-theme.zip" | tail -5
 
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ inputs.version }}
-        run: gh release create "v$VERSION" --title "v$VERSION" --generate-notes "pediment-child-theme-$VERSION.zip"
+        run: gh release create "v$VERSION" --title "v$VERSION" --generate-notes "pediment-child-theme.zip"

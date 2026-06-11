@@ -19,6 +19,13 @@ if ( ! defined( 'PEDIMENT_CHILD_VERSION' ) ) {
 	define( 'PEDIMENT_CHILD_VERSION', '0.1.0' );
 }
 
+// One-click theme updates from GitHub Releases (no manual zip uploads).
+if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
+	require_once __DIR__ . '/vendor/autoload.php';
+}
+require_once __DIR__ . '/inc/ThemeUpdater.php';
+\PedimentChild\ThemeUpdater::register();
+
 /**
  * Register every block in the given directory (defaults to build/blocks).
  *
