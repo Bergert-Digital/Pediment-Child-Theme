@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.0](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.2.1...v0.3.0) (2026-06-12)
+
+
+### Features
+
+* **theme:** add screenshot.png preview image ([d735769](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/d735769378c2755644f325f6f2f8d3b3ec781246))
+* **updates:** expose child PUC checker + add screenshot ([#3](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/3)) ([b9ef93a](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/b9ef93a318c0dd50b4ac46b5be3946237644f96d))
+* **updates:** expose child PUC checker via pediment_update_checkers ([a34107f](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/a34107f3e8025c2e12351270d5952ef0198e9a85))
+
 ## [0.2.1](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.2.0...v0.2.1) (2026-06-11)
 
 
