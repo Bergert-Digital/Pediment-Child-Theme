@@ -1,8 +1,13 @@
 {
   "core": "WordPress/WordPress#6.9",
   "phpVersion": "8.1",
-  "themes": [".", "https://github.com/Bergert-Digital/pediment/releases/download/v0.2.1/pediment.zip"],
-  "plugins": ["https://github.com/Bergert-Digital/pediment-ai/releases/download/v0.1.7/pediment-ai.zip"],
+  "themes": [
+    ".",
+    "https://github.com/Bergert-Digital/pediment/releases/download/v0.4.0/pediment.zip"
+  ],
+  "plugins": [
+    "https://github.com/Bergert-Digital/pediment-ai/releases/download/v0.3.3/pediment-ai.zip"
+  ],
   "port": 8890,
   "testsPort": 8891,
   "config": {
