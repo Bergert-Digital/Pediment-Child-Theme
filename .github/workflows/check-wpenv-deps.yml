@@ -19,9 +19,9 @@ jobs:
   bump:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '20'
 
@@ -61,7 +61,7 @@ jobs:
 
       - name: Open PR
         if: steps.check.outputs.outdated == '1'
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.STARTER_THEME_PAT }}
           branch: chore/bump-wpenv-deps

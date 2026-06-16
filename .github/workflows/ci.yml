@@ -9,7 +9,7 @@ jobs:
   phpcs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
@@ -20,8 +20,8 @@ jobs:
   lint-js:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: npm
@@ -32,22 +32,22 @@ jobs:
   phpunit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           path: pediment-child-theme
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           repository: Bergert-Digital/pediment
           ref: development
           token: ${{ secrets.STARTER_THEME_PAT }}
           path: pediment
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           repository: Bergert-Digital/pediment-ai
           ref: development
           token: ${{ secrets.STARTER_THEME_PAT }}
           path: pediment-ai
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: npm
@@ -79,22 +79,22 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           path: pediment-child-theme
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           repository: Bergert-Digital/pediment
           ref: development
           token: ${{ secrets.STARTER_THEME_PAT }}
           path: pediment
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           repository: Bergert-Digital/pediment-ai
           ref: development
           token: ${{ secrets.STARTER_THEME_PAT }}
           path: pediment-ai
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: npm
@@ -119,7 +119,7 @@ jobs:
       - if: always()
         run: cd pediment-child-theme && npm run env:stop
       - if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: pediment-child-theme/playwright-report/
