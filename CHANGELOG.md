@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.3.0...v0.3.1) (2026-06-18)
+
+
+### Bug Fixes
+
+* **deps:** cut 0.3.1 release for markdown-it advisory ([88fe574](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/88fe574336d9e11d7707d93f2d869c378ff469cd))
+* **deps:** cut 0.3.1 release for markdown-it advisory ([#10](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/10)) ([4a49f95](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/4a49f9577963fe01c55481e5294e782a92a2522c))
+
 ## [0.3.0](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.2.1...v0.3.0) (2026-06-12)
 
 
