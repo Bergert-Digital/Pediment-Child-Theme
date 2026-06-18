@@ -1,0 +1,18 @@
+"$schema" = "https://conductor.build/schemas/settings.repo.schema.json"
+
+[scripts]
+# Install PHP + JS dependencies and build the child blocks so a freshly
+# created workspace has a ready-to-run theme. No Docker here — kept fast and
+# safe so creating a workspace never spins up wp-env.
+setup = "composer install && npm install && npm run build"
+
+# Boot the wp-env WordPress stack (activates this child + seeds demo content,
+# idempotent), then run the block watcher in the foreground for live rebuilds.
+# wp-env uses the fixed ports from .wp-env.json (8890/8891) and the project is
+# explicitly single-instance, so this is nonconcurrent.
+run = "npm run env:setup && npm run start"
+run_mode = "nonconcurrent"
+
+# Stop this workspace's wp-env containers when archiving. `|| true` so a
+# not-running env never blocks archival. Avoids `wp-env destroy` (interactive).
+archive = "npm run env:stop || true"
