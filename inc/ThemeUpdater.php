@@ -60,19 +60,5 @@ final class ThemeUpdater {
 		if ( method_exists( $api, 'enableReleaseAssets' ) ) {
 			$api->enableReleaseAssets( '/pediment-child-theme\.zip$/' );
 		}
-
-		// Expose the checker so the parent theme's inc/update-check.php can
-		// include the child in its manual "Check for theme updates" button.
-		add_filter(
-			'pediment_update_checkers',
-			static function ( array $checkers ) use ( $checker ): array {
-				$checkers[] = array(
-					'slug'    => 'pediment-child-theme',
-					'name'    => 'Pediment Child',
-					'checker' => $checker,
-				);
-				return $checkers;
-			}
-		);
 	}
 }
