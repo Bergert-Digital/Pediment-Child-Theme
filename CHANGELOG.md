@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.3.1...v0.3.2) (2026-06-19)
+
+
+### Refactors
+
+* **updates:** drop child PUC from manual update-check button ([#12](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/12)) ([ee930bb](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/ee930bbe76b614eeb33a14998dc6098a335194bb))
+
 ## [0.3.1](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.3.0...v0.3.1) (2026-06-18)
 
 
