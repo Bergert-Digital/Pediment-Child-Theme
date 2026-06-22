@@ -84,21 +84,39 @@ names or attributes that are not in it.
 
 ### 4. Map (fidelity ladder)
 
-For each section in `inventory.md`, pick exactly one tier — in this priority order:
+**The design target is the original — never Pediment's defaults.** Recolored
+parent blocks left at their Pediment shapes are what make a port "scream
+Pediment." So there are only two acceptable outcomes per section, and **a
+Pediment/core block is NEVER used as-is**:
 
-1. **Existing block** — a Pediment (or core) block whose purpose and attributes
-   fit the section as-is.
-2. **Existing block + variant/CSS** — a Pediment block that fits with a CSS class
-   variant or minor inline style.
-3. **NEW BLOCK** — no existing block can represent the section's visual treatment
-   faithfully even with CSS tuning.
+1. **Adapt an existing block** — ONLY when the block's *structure* already
+   matches the source section (same layout skeleton). You must STILL adapt it to
+   the original's design via a child-theme block-style variant / `style.css`
+   override (spacing, colour bands, card chrome, type, decoration). An existing
+   block at its Pediment defaults is never an acceptable result — every reused
+   block is adapted.
+2. **NEW BLOCK** — the default for any **distinctive** section, and **mandatory**
+   whenever the block's structure differs from the source. Build it in the child
+   theme (worked patterns below).
+
+**Forbidden:** force-fitting a structurally-wrong block with CSS — e.g. dropping
+Pediment `feature` cards onto a navy band and recolouring them produced white
+cards on navy. If the structure doesn't match the source, it is a NEW BLOCK, not
+a CSS patch.
+
+**Worked bespoke patterns already in `src/blocks/` — reuse / extend, don't
+reinvent:** `pediment-child/site-hero` (full-bleed band + edge media + CTA),
+`pediment-child/testimonial-carousel` (rotating quotes on a band),
+`pediment-child/teaser-row` (image-beside-text teasers on a band). Heroes and any
+"signature" section are almost always NEW BLOCK.
 
 Write `.context/port/<slug>/mapping.md`: a table of
-`section label → tier decision → rationale`.
+`section label → decision (ADAPT <block> | NEW BLOCK <name>) → rationale`.
 
-The rationale MUST include the **visual treatment** from `inventory.md` and
-explain why the chosen tier is the lowest sufficient one. For tier 3, explain
-concretely why tiers 1–2 fall short.
+The rationale MUST cite the **visual treatment** from `inventory.md`. For ADAPT,
+name the specific child-theme overrides that bring the block to the original's
+design (it is never left as-is). For NEW BLOCK, state which source structure it
+reproduces.
 
 ---
 
@@ -244,6 +262,8 @@ Once `overallPass: true`:
 
 | Rule | Detail |
 |---|---|
+| **Never use a block as-is** | Pediment/core blocks are NEVER output at their defaults — every reused block is adapted to the original's design (child-theme variant/`style.css`). The design target is the original, never Pediment. Distinctive sections are bespoke child blocks. |
+| **No CSS force-fit** | Never patch a structurally-wrong block with CSS to fake the source (that produced white cards on navy). Structure mismatch ⇒ NEW BLOCK, not a CSS patch. |
 | **Entrance animation delay** | Pediment fades sections in on scroll. Always wait ≥ 1.5 s after a section enters the viewport before any screenshot or capture. An early capture appears blank or grey. |
 | **`is-style-band-navy` scope** | Only valid on `stat`, `pull-quote`, and `social-links` blocks. Text bands (`section-head`, `prose`, `feature`) must use `surface` or `elevated` — never `is-style-band-navy` on a text band. |
 | **Media references** | All images must be imported via `npx wp-env run cli wp media import --porcelain` and referenced by their returned attachment ID. Never hotlink the original source URL in final markup. |

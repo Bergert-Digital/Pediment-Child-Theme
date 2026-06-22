@@ -43,10 +43,17 @@ wp-env**; a serialized-markup export is a byproduct for portability.
   section against the rubric and the source; the builder loops applying fixes until
   every section passes (≥ 4/5 per category, no high-severity diffs, holistic
   "matches the original closely enough" = true).
-- **Block adaptation ladder (bar = match the original):** existing block → existing
-  block + variant/child-CSS → new child block. New blocks are *expected* where
-  Pediment lacks the pattern; **new-block creation pauses for user approval**,
-  batched once per page.
+- **Block adaptation ladder (bar = match the original; Pediment defaults are never
+  acceptable output):** two outcomes per section —
+  (1) **adapt an existing block** ONLY when its *structure* already matches the
+  source, and even then it is **never used as-is** — it is adapted to the
+  original's design via a child-theme block-style variant / `style.css` override;
+  (2) **new child block** — the default for any distinctive section and mandatory
+  when the block's structure differs from the source. **Forbidden:** CSS-patching
+  a structurally-wrong block to force-fit the source (this produced white cards on
+  navy). New blocks are *expected*, not exceptional; **new-block creation pauses
+  for user approval**, batched once per page. Worked patterns: `site-hero`,
+  `testimonial-carousel`, `teaser-row`.
 - **Media:** import into the target media library, reference by attachment ID.
 - **Catalog:** the existing `tools/blocks-catalog.mjs` generator +
   `docs/PEDIMENT-BLOCKS.md` stay as the block inventory source.
@@ -135,8 +142,11 @@ has no `settings`, stop and tell the user to run `/port-site` first.
    "rotating testimonial carousel", "3-up cards").
 2. **Catalog refresh** — run `npm run blocks:catalog`; stop on drift; read
    `docs/PEDIMENT-BLOCKS.md`.
-3. **Map (fidelity ladder)** — each section → existing block | existing + variant/
-   CSS | `NEW BLOCK`. Record `mapping.md` with the *visual-treatment* rationale.
+3. **Map (fidelity ladder)** — each section → `ADAPT <block>` (only if structure
+   already matches the source — and still adapted to the original via child-theme
+   overrides, never as-is) | `NEW BLOCK <name>` (default for distinctive sections;
+   mandatory on structure mismatch). No CSS force-fit of a structurally-wrong
+   block. Record `mapping.md` with the *visual-treatment* rationale.
 4. **New-block gate** — if any `NEW BLOCK`, stop once, present all (name, why
    ladder steps 1–2 can't match the original, attributes/slots). On approval,
    scaffold per `promo-banner` convention, build, re-catalog. Declined → manual

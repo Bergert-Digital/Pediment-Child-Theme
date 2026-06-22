@@ -24,7 +24,7 @@ diverges from the original; they are not independent goals.
 
 | Category | What FAILs it |
 |---|---|
-| **Fidelity to original** | The rendered section diverges visibly from the source section — different layout rhythm, missing content blocks, wrong visual weight, or the overall impression does not match. This is the primary category. |
+| **Fidelity to original** | The rendered section diverges visibly from the source section — different layout rhythm, missing content blocks, wrong visual weight, or the overall impression does not match. **Also fails if the section looks like a recolored stock Pediment block rather than the source** (e.g. Pediment's bordered white feature cards with peach icon-squares, the stat-card hero, the default band rhythm) — recognisable Pediment defaults are a fidelity FAIL even when colors/fonts are on-brand. This is the primary category. |
 | **Spacing & padding** | Content touching edges; no vertical breathing room; cramped or collapsed band. (e.g. `hero media-bg` has no `padding-block` — must be added.) |
 | **Image sizing & aspect** | Images rendered far larger or smaller than the source; portrait images ballooning a column; no max-width/height constraint. |
 | **Block-usage correctness** | Wrong block for the job — e.g. a `pediment/cta` band (title+body+buttons) used as a lone button. A single link → `core/button`. A conversion band → `cta`. |
