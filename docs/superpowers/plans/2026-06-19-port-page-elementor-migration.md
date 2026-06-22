@@ -1,5 +1,7 @@
 # `/port-page` Elementor → Pediment Migration — Implementation Plan
 
+> **Superseded by [2026-06-22 fidelity-first design](../specs/2026-06-22-port-fidelity-first-design.md) / plan.** Kept for history.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Ship a `/port-page <url>` Claude Code skill in this child theme that rebuilds a single Elementor page natively in Pediment blocks, backed by an auto-refreshed block catalog, emitting a reviewable serialized-markup file plus downloaded media.

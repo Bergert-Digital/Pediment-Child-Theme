@@ -20,8 +20,9 @@ All per-run scratch files go under `.context/port-site/` (gitignored).
 
 ## Preconditions (check first, stop if unmet)
 
-1. **wp-env is running.** Run `npm run env:mode`. If the output is not `running`,
-   tell the user to run `npm run env:start` and stop.
+1. **wp-env is running.** Run `npx wp-env run cli wp option get siteurl`. If this
+   command errors or exits non-zero, wp-env is not running — tell the user to run
+   `npm run env:start` and stop.
 2. **Browser automation is available.** If any browser step below fails to open a
    tab, stop and report.
 3. **The homepage URL is publicly accessible** (no auth, not a localhost URL).
@@ -177,7 +178,7 @@ const FONT_FILE = process.env.FONT_FILE;
 
 const child = reskin(brand, parent, FONT_FILE);
 writeFileSync('theme.json', JSON.stringify(child, null, 2) + '\n');
-console.log('theme.json written — palette slots:', Object.keys(child.settings.color.palette).length || child.settings.color.palette.length);
+console.log('theme.json written — palette slots:', child.settings.color.palette.length);
 EOF
 ```
 (Pass `FONT_FILE` in the environment, e.g. `FONT_FILE=plus-jakarta-sans.woff2 node ...`)

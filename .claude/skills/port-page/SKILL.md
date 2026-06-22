@@ -26,9 +26,10 @@ All per-run files go under `.context/port/<slug>/` (gitignored).
 Check all three before doing anything else. STOP (with the stated message) on the
 first failure.
 
-1. **wp-env running** — run `npm run env:mode`. If the output does not confirm a
-   running environment, tell the user: "wp-env is not running — start it with
-   `npm run env:start` then re-run `/port-page`." Stop.
+1. **wp-env running** — run `npx wp-env run cli wp option get siteurl`. If this
+   command errors or exits non-zero, wp-env is not running — tell the user:
+   "wp-env is not running — start it with `npm run env:start` then re-run
+   `/port-page`." Stop.
 
 2. **Branded theme present** — run:
    ```bash
@@ -122,7 +123,7 @@ Wait for the user's decision on every proposal before proceeding.
    in the new block's styles.
 3. Run `npm run build`.
 4. Re-run `npm run blocks:catalog` so the new block enters the catalog
-   before the build step.
+   after the build step.
 
 **Declined blocks:**
 Record the section as a coverage TODO in `.context/port/<slug>/coverage.md`.
@@ -137,12 +138,16 @@ Do not fabricate markup for it; the section is omitted from the built page.
 For every image URL referenced in `inventory.md`:
 
 ```bash
-wp --path=.wp-env/WordPress media import "<url>" --porcelain
+npx wp-env run cli wp media import "<url>" --porcelain
 ```
 
 Capture the returned attachment ID. Never hotlink source URLs in the final
 markup — all `<img>` src values and block `url` attributes must reference
 attachment IDs or the WordPress-hosted URL returned by `wp media import`.
+
+> Note: `wp media import` of a remote URL runs *inside the container*, so the
+> source image URL must be reachable from the container (it is, for public
+> source sites).
 
 Collect a map of `source URL → attachment ID` for use in markup composition.
 
@@ -161,22 +166,23 @@ Build the serialized `<!-- wp:… -->` block markup for the full page:
 #### 6c. Create / update the page in wp-env
 
 ```bash
-# Create:
-wp --path=.wp-env/WordPress post create \
+# Create — pass markup from the host file via bash expansion on the host:
+MARKUP=$(cat .context/port/<slug>/markup.html)
+npx wp-env run cli wp post create \
   --post_type=page \
   --post_title="<Page Title>" \
   --post_status=draft \
-  --post_content="$(cat .context/port/<slug>/markup.html)" \
+  --post_content="$MARKUP" \
   --porcelain
 # → prints the new post ID
 
 # Activate the child theme if not already active:
-wp --path=.wp-env/WordPress theme activate <theme-slug>
+npx wp-env run cli wp theme activate <theme-slug>
 ```
 
 Capture the page permalink:
 ```bash
-wp --path=.wp-env/WordPress post get <post-id> --field=guid
+npx wp-env run cli wp post get <post-id> --field=guid
 ```
 
 Record the live URL (e.g. `http://localhost:8900/?page_id=<id>`).
@@ -209,7 +215,7 @@ The critic evaluates blind against the rubric in
    prior rounds below `---`).
 3. If `overallPass: false`, surface each failing section's `issues` array,
    apply the stated fixes to the block markup, update the page in wp-env
-   (`wp post update <id> --post_content="$(cat …)"`), then re-dispatch
+   (`MARKUP=$(cat .context/port/<slug>/markup.html) && npx wp-env run cli wp post update <id> --post_content="$MARKUP"`), then re-dispatch
    the critic. Repeat until `overallPass: true`.
 4. If the same section fails three rounds with the same high-severity issue and
    no fix closes the gap, escalate to the user with the issue details and proposed
@@ -240,7 +246,7 @@ Once `overallPass: true`:
 |---|---|
 | **Entrance animation delay** | Pediment fades sections in on scroll. Always wait ≥ 1.5 s after a section enters the viewport before any screenshot or capture. An early capture appears blank or grey. |
 | **`is-style-band-navy` scope** | Only valid on `stat`, `pull-quote`, and `social-links` blocks. Text bands (`section-head`, `prose`, `feature`) must use `surface` or `elevated` — never `is-style-band-navy` on a text band. |
-| **Media references** | All images must be imported via `wp media import --porcelain` and referenced by their returned attachment ID. Never hotlink the original source URL in final markup. |
+| **Media references** | All images must be imported via `npx wp-env run cli wp media import --porcelain` and referenced by their returned attachment ID. Never hotlink the original source URL in final markup. |
 | **CSS token discipline** | Any new block CSS must use `var(--wp--preset--…)` only. No color literals, no hard-coded hex values. |
 | **Theme slug** | Resolve dynamically: `basename $(pwd)`. Do not hard-code. |
 | **Commit convention** | Conventional commit, ≤ 60-char summary, stage files by name, trailer: `Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>` |

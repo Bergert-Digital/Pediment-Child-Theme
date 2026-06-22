@@ -1,5 +1,7 @@
 # `/port-page` — Elementor → Pediment Page Migration Command — Design
 
+> **Superseded by [2026-06-22 fidelity-first design](./2026-06-22-port-fidelity-first-design.md) / plan.** Kept for history.
+
 **Date:** 2026-06-19
 **Status:** Approved (pending written-spec review)
 
