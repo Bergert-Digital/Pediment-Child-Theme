@@ -131,14 +131,21 @@ Name the file `<FamilyName>.woff2` (family name, spaces replaced with hyphens,
 lowercased, e.g. `plus-jakarta-sans.woff2`).
 
 **Case B — Google Fonts CSS URL (`fonts.googleapis.com`):**
-1. Fetch the CSS with a modern `User-Agent` so it returns `.woff2` format:
+1. Fetch the CSS with a **full Chrome `User-Agent`** so Google returns `.woff2`
+   (a minimal UA like `Mozilla/5.0 ... AppleWebKit/537.36` gets served `.ttf`
+   instead — the UA must look like a real Chrome):
    ```bash
-   curl -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36" \
-        -L "<srcUrl>" -o .context/port-site/gfonts.css
+   UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36"
+   curl -sA "$UA" -L "<srcUrl>" -o .context/port-site/gfonts.css
    ```
-2. Extract the first `.woff2` URL from the CSS:
+2. Extract the first **latin-subset** `.woff2` URL (portable — no `grep -oP`,
+   which BSD/macOS grep lacks). Prefer the `latin` block; fall back to the first
+   `.woff2`:
    ```bash
-   grep -oP 'url\(\K[^)]+\.woff2' .context/port-site/gfonts.css | head -1
+   awk '/\/\* latin \*\//{f=1} f && /woff2/{print; f=0}' .context/port-site/gfonts.css \
+     | grep -oE 'https://[^)]+\.woff2' | head -1
+   # fallback if empty:
+   #   grep -oE 'https://[^)]+\.woff2' .context/port-site/gfonts.css | head -1
    ```
 3. Download that `.woff2`:
    ```bash
