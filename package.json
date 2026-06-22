@@ -13,7 +13,9 @@
     "env:dev": "node tools/wp-env-mode.mjs dev",
     "env:publish": "node tools/wp-env-mode.mjs publish",
     "env:mode": "node tools/wp-env-mode.mjs status",
-    "check:wpenv-deps": "node tools/check-wpenv-deps.mjs"
+    "check:wpenv-deps": "node tools/check-wpenv-deps.mjs",
+    "blocks:catalog": "node tools/blocks-catalog.mjs",
+    "test:tools": "node --test tests/tools/*.test.mjs"
   },
   "devDependencies": {
     "@babel/runtime": "^7.29.2",
