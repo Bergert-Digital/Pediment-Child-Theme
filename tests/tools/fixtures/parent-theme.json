@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 2,
+  "settings": {
+    "color": { "palette": [
+      { "slug": "primary", "color": "#0A1B33", "name": "Primary" },
+      { "slug": "accent", "color": "#0E7490", "name": "Accent" },
+      { "slug": "accent-hover", "color": "#155E75", "name": "Accent hover" },
+      { "slug": "accent-tint", "color": "#E1F1F6", "name": "Accent tint" },
+      { "slug": "surface", "color": "#FFFFFF", "name": "Surface" },
+      { "slug": "surface-elevated", "color": "#F5F8FC", "name": "Surface elevated" },
+      { "slug": "surface-sunken", "color": "#EEF3F8", "name": "Surface sunken" },
+      { "slug": "foreground", "color": "#0B1B33", "name": "Foreground" },
+      { "slug": "foreground-muted", "color": "#5C6B82", "name": "Foreground muted" },
+      { "slug": "border", "color": "#E4EAF2", "name": "Border" },
+      { "slug": "border-strong", "color": "#CDD9EC", "name": "Border strong" }
+    ] },
+    "typography": { "fontFamilies": [
+      { "slug": "body", "name": "Body", "fontFamily": "\"Plus Jakarta Sans\", sans-serif", "fontFace": [] },
+      { "slug": "heading", "name": "Heading", "fontFamily": "\"Plus Jakarta Sans\", sans-serif", "fontFace": [] },
+      { "slug": "mono", "name": "Mono", "fontFamily": "ui-monospace, monospace" }
+    ] }
+  }
+}
