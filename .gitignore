@@ -7,3 +7,4 @@
 .DS_Store
 .wp-env.override.json
 /.worktrees/
+/.context/
