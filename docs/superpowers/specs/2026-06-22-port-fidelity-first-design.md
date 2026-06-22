@@ -98,7 +98,8 @@ theme.json                             ← re-skinned to the client's brand (pha
   and font faces are wired. Webfont download is a separate side-effect step.
 - **`.claude/skills/port-site/SKILL.md`** — *one job:* phase-1 pipeline — extract
   brand → download fonts → re-skin `theme.json` → global block-style overrides →
-  (final, separable step) header/footer template parts → verify brand renders.
+  verify brand renders. (Header/footer template parts are deferred to a later
+  phase — see Out of scope.)
 - **`.claude/skills/port-page/SKILL.md`** — *one job:* phase-2 pipeline (below).
 - **`.claude/skills/shared/visual-qa.md`** — the rubric (already drafted).
 - **`.claude/skills/shared/fidelity-critic-prompt.md`** — the critic subagent
@@ -118,10 +119,10 @@ theme.json                             ← re-skinned to the client's brand (pha
 4. **Global block-style overrides**: child `theme.json` `styles` / `styles.css` for
    brand-specific button shape, heading scale, band treatments not expressible via
    palette alone.
-5. **Header/footer template parts** (final, separable step): recreate the client's
-   nav/header and footer as Pediment template parts.
-6. **Verify**: render a representative page; confirm brand (accent on buttons,
+5. **Verify**: render a representative page; confirm brand (accent on buttons,
    fonts, navy bands) via the fidelity critic against the source's brand.
+
+(Header/footer template parts are **deferred to a later phase** — not in v1.)
 
 ## Phase 2 — `/port-page <url>`
 
@@ -176,6 +177,9 @@ has no `settings`, stop and tell the user to run `/port-site` first.
 
 ## Out of scope (v1)
 
+- **Header/footer template parts** — deferred to a later phase. v1 `/port-site`
+  covers palette, typography, and global block styles only; the parent's
+  header/footer remain until a follow-up phase recreates the client's.
 - Whole-site crawl (auto-discovering every URL) — run `/port-page` per URL.
 - Auth-gated or JS-only-rendered source pages.
 - Pixel-perfect raster cloning (we match structure/brand/treatment, not exact
@@ -189,11 +193,10 @@ has no `settings`, stop and tell the user to run `/port-site` first.
   blocks, markup-file model) → the phase-2 pipeline above. Add `/port-site`.
 - **Promote:** the drafted `.claude/skills/port-page/visual-qa.md` rubric → shared
   critic rubric.
-- The committed `theme.json` brand re-skin + `assets/fonts/montserrat.woff2` from
-  the hands-on run are **berlinerteam-specific demo artifacts**; the *template*
-  child theme ships an empty `theme.json` (a real client fork gets re-skinned by
-  `/port-site`). Decide at implementation time whether to keep them as a worked
-  example or revert.
+- The `theme.json` brand re-skin + `assets/fonts/montserrat.woff2` from the
+  hands-on run are berlinerteam-specific demo artifacts and are **reverted** — the
+  template child theme ships an empty `theme.json` and no bundled client fonts. A
+  real client fork gets re-skinned by `/port-site`.
 
 ## Implementation details to pin during planning
 
