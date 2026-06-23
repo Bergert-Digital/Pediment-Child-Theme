@@ -1,0 +1,10 @@
+{
+  "name": "pediment-child/promo-banner",
+  "title": "Promo Banner",
+  "description": "Example child block.",
+  "attributes": {
+    "headline": { "type": "string", "default": "" },
+    "linkUrl": { "type": "string", "default": "" }
+  },
+  "supports": { "align": ["wide", "full"] }
+}

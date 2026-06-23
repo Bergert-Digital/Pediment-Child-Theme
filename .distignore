@@ -1,5 +1,6 @@
 .git
 .github
+.claude
 .distignore
 .wp-env.json
 node_modules

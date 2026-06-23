@@ -8,3 +8,5 @@
 .wp-env.override.json
 /.conductor/settings.local.toml
 /.worktrees/
+/.context/
+/docs/superpowers/
