@@ -1,0 +1,11 @@
+{
+  "name": "pediment/hero",
+  "title": "Hero",
+  "description": "Page-leading headline section.",
+  "attributes": {
+    "heading": { "type": "string", "default": "" },
+    "subheading": { "type": "string", "default": "" },
+    "buttonText": { "type": "string", "default": "" }
+  },
+  "supports": { "align": ["wide", "full"] }
+}

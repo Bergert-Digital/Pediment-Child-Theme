@@ -1,0 +1,12 @@
+{
+  "buttonBg": "rgb(236, 168, 103)",
+  "buttonText": "#ffffff",
+  "headingColor": "#144478",
+  "bodyColor": "#1E2C39",
+  "linkColor": "#144478",
+  "bandBg": "#144478",
+  "fontFamilies": [
+    { "name": "Montserrat", "weights": ["400","600","700"], "srcUrl": "https://example/montserrat.woff2" }
+  ],
+  "radii": ["8px", "999px"]
+}
