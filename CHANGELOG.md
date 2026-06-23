@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.3.2...v0.4.0) (2026-06-23)
+
+
+### Features
+
+* Elementor→Pediment porting toolchain + env/dep updates ([#17](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/17)) ([91649ad](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/91649adef96e72b2ed27c7b72d169720bea0055f))
+
 ## [0.3.2](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.3.1...v0.3.2) (2026-06-19)
 
 
