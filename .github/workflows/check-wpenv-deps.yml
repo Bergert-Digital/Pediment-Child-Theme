@@ -64,6 +64,7 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.STARTER_THEME_PAT }}
+          base: development
           branch: chore/bump-wpenv-deps
           delete-branch: true
           title: 'chore(wp-env): bump parent/plugin refs to latest tags'
