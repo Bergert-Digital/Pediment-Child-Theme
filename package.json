@@ -13,6 +13,7 @@
     "env:dev": "node tools/wp-env-mode.mjs dev",
     "env:publish": "node tools/wp-env-mode.mjs publish",
     "env:mode": "node tools/wp-env-mode.mjs status",
+    "env:link-local": "node tools/link-local-deps.mjs",
     "check:wpenv-deps": "node tools/check-wpenv-deps.mjs",
     "blocks:catalog": "node tools/blocks-catalog.mjs",
     "test:tools": "node --test tests/tools/*.test.mjs"
@@ -26,6 +27,8 @@
   },
   "overrides": {
     "shell-quote": "^1.8.4",
-    "markdown-it": "^14.2.0"
+    "markdown-it": "^14.2.0",
+    "form-data": "^4.0.6",
+    "launch-editor": "^2.14.1"
   }
 }

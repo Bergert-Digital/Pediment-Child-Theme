@@ -3,8 +3,11 @@
 [scripts]
 # Install PHP + JS dependencies and build the child blocks so a freshly
 # created workspace has a ready-to-run theme. No Docker here — kept fast and
-# safe so creating a workspace never spins up wp-env.
-setup = "composer install && npm install && npm run build"
+# safe so creating a workspace never spins up wp-env. The final step is a
+# no-op unless you opt in (PEDIMENT_LINK_LOCAL=1 in settings.local.toml): when
+# on, it points wp-env at your local pediment / pediment-ai checkouts instead
+# of the pinned release zips. See tools/link-local-deps.mjs.
+setup = "composer install && npm install && npm run build && node tools/link-local-deps.mjs"
 
 # Boot the wp-env WordPress stack (activates this child + seeds demo content,
 # idempotent), then run the block watcher in the foreground for live rebuilds.
