@@ -144,6 +144,9 @@ wp transient delete --all
 
 ## Built-in Pediment blocks
 
+For the full list of available blocks (parent + child) and when to use each, see the
+generated catalog at [PEDIMENT-BLOCKS.md](./PEDIMENT-BLOCKS.md) (`npm run blocks:catalog`).
+
 Visual defaults for `pediment/hero`, `pediment/cta`, `pediment/feature`, etc. live in the
 parent at `wp-content/themes/pediment/build/blocks/<block>/style-index.css`. To customise
 these for one site, prefer:
