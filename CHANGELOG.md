@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.0](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.4.0...v0.5.0) (2026-06-24)
+
+
+### Features
+
+* add initialize skill to onboard client repos ([abf7ef3](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/abf7ef36c38e87c9055a430c169037070ccee17b))
+* add update skill to sync client repos from template ([fd6189e](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/fd6189e4e3bc0e002b3f8a20219a2db5c7315104))
+* initialize/update skills for template→client docs sync ([#25](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/25)) ([7a30ae9](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/7a30ae98dbb107f255ff3366b2849b4d72ccc7b1))
+* initialize/update skills to sync docs+blocks from template ([#24](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/24)) ([307571a](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/307571ad64e161d034f371b43d279493c7d9850d))
+
 ## [0.4.0](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.3.2...v0.4.0) (2026-06-23)
 
 
