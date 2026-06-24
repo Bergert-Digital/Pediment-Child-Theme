@@ -1,7 +1,7 @@
 # AGENTS.md — <client> child theme
 
-Agent instructions for this **client child theme**. User-level `~/.claude/CLAUDE.md` and
-explicit user requests take precedence over this file.
+Agent instructions for this **client child theme**. User-level or tool-specific agent
+instructions and explicit user requests take precedence over this file.
 
 > This repo was created from the **Pediment child-theme template**
 > (`Bergert-Digital/Pediment-Child-Theme`). This file was installed by the template's

@@ -1,6 +1,7 @@
 .git
 .github
 .claude
+skills
 .distignore
 .wp-env.json
 node_modules
