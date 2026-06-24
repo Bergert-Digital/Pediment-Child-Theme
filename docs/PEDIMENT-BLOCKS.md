@@ -166,6 +166,21 @@
 
 **Align:** wide, full
 
+## pediment/media-text
+
+**Media & Text** — A section that pairs a column of copy with an image side by side. Put the heading, paragraphs and lists in innerBlocks; set mediaPosition to left or right.
+
+**Source:** parent
+**Wrapper class:** `starter-media-text`
+**Use when:** a section pairing body copy with a supporting image side by side — about sections, feature explanations, alternating content rows. Put the text in innerBlocks; set `mediaPosition` left/right.
+
+**Attributes:**
+  - `mediaId` (number)
+  - `altOverride` (string)
+  - `mediaPosition` (string)
+
+**Align:** wide, full
+
 ## pediment/mega-menu
 
 **Mega Menu** — A mega-menu dropdown for the navigation: columns of icon links.
@@ -190,19 +205,15 @@
 
 ## pediment/pull-quote
 
-**Pull Quote** — An emphasized quotation, optionally rendered as a testimonial with avatar, author name, and role.
+**Pull Quote** — An emphasized quotation with optional citation.
 
 **Source:** parent
 **Wrapper class:** `starter-pull-quote`
-**Use when:** a highlighted testimonial or blockquote with optional author name, role, and avatar.
+**Use when:** an emphasized in-copy quotation or blockquote with an optional citation. For customer testimonials, use `pediment/testimonial` instead.
 
 **Attributes:**
-  - `variant` (string)
   - `quote` (string)
   - `citation` (string)
-  - `authorName` (string)
-  - `authorRole` (string)
-  - `avatarId` (integer)
 
 **Align:** wide
 
@@ -220,8 +231,24 @@
   - `lead` (string)
   - `alignment` (string)
   - `level` (number)
+  - `maxWidth` (string)
 
 **Align:** wide
+
+## pediment/slider
+
+**Slider** — An image/content slider: one slide at a time, each pairing a full-bleed image with a colored content panel. Slides are managed in the block settings sidebar.
+
+**Source:** parent
+**Wrapper class:** `starter-slider`
+**Use when:** a full-bleed carousel showing one slide at a time, each pairing an image with a colored content panel — showcase rotators, project highlights. Manage slides in the block sidebar.
+
+**Attributes:**
+  - `mediaPosition` (string)
+  - `panelColor` (string)
+  - `slides` (array)
+
+**Align:** wide, full
 
 ## pediment/social-links
 
@@ -246,6 +273,16 @@
   - `label` (string)
   - `context` (string)
 
+## pediment/stat-grid
+
+**Stat Grid** — A responsive row of key figures. Use for a 'numbers & facts' / Zahlen & Fakten / stats section. Contains Stat child blocks laid out side by side.
+
+**Source:** parent
+**Wrapper class:** `starter-stat-grid`
+**Use when:** a "numbers & facts" / Zahlen & Fakten section — a row of key figures. Wraps `pediment/stat` child blocks.
+
+**Align:** wide, full
+
 ## pediment/step
 
 **Step** — A single numbered step (number auto-generated).
@@ -267,4 +304,28 @@
 **Use when:** a sequential how-it-works or process section with numbered steps.
 
 **Align:** wide
+
+## pediment/testimonial
+
+**Testimonial** — A single customer testimonial card: quote, author name, role, and optional avatar.
+
+**Source:** parent
+**Wrapper class:** `starter-testimonial`
+**Use when:** a single customer quote card with author, role, and optional avatar. For several side by side, use `pediment/testimonial-grid` instead.
+
+**Attributes:**
+  - `quote` (string)
+  - `authorName` (string)
+  - `authorRole` (string)
+  - `avatarId` (integer)
+
+## pediment/testimonial-grid
+
+**Testimonial Grid** — A responsive grid of customer testimonial cards. Use for 'what our clients say' / Kundenstimmen sections. Contains Testimonial child blocks.
+
+**Source:** parent
+**Wrapper class:** `starter-testimonial-grid`
+**Use when:** a "what our clients say" / Kundenstimmen section — several testimonial cards in a responsive grid. Wraps `pediment/testimonial` child blocks.
+
+**Align:** wide, full
 

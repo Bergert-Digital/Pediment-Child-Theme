@@ -45,8 +45,16 @@ Or browse the source on GitHub: <https://github.com/bergert/pediment>.
 
 ## Where to make changes
 
-Read [docs/STYLING.md](./docs/STYLING.md) first — it's the decision tree for "which
-layer owns this?" Short version:
+Two docs orient you before you touch anything:
+
+- **Building a page, or picking which block to use?** Read
+  [docs/PEDIMENT-BLOCKS.md](./docs/PEDIMENT-BLOCKS.md) — the generated catalog of every
+  available block (parent + child), each with a "Use when" note and its attributes. It's
+  the source of truth for *what blocks exist*; an agent that skips it hand-rolls markup
+  instead of composing Pediment blocks. Regenerate it after adding or changing a block:
+  `npm run blocks:catalog`.
+- **Styling, or "which layer owns this?"** Read [docs/STYLING.md](./docs/STYLING.md) —
+  the decision tree. Short version:
 
 | Scope | Layer | How |
 |---|---|---|
@@ -56,6 +64,23 @@ layer owns this?" Short version:
 | New client-specific block | **Child** | `src/blocks/<block>/` (worked example: `src/blocks/promo-banner/`) |
 | Framework default (every Pediment site should get it) | **Upstream** | File an issue/PR against `bergert/pediment` on GitHub |
 | Bug in a Pediment-shipped block | **Upstream** | Same |
+
+## Authoring a block editor
+
+Match the parent library's editing UX — don't invent your own. The whole Pediment
+catalog follows one split, and so must child blocks. Reference implementations:
+`src/blocks/promo-banner/` (single block) and any parent `*-grid` (collection).
+
+- **Visible text → edit in the canvas** with `RichText` (headings, body, quotes, labels).
+  Rule of thumb: if the client reads it on the page, they edit it on the page.
+- **Everything else → the sidebar** (`InspectorControls` + `PanelBody`): media
+  (`MediaUpload`/`MediaPlaceholder`), URLs/links (`TextControl`), and layout/config
+  (`ToggleControl`/`SelectControl`). Don't put media pickers or URL fields inline.
+- **Repeating items → native `InnerBlocks`**, never hand-rolled add/remove buttons.
+  Use `useInnerBlocksProps` with `allowedBlocks` + `template` + `templateLock: false`,
+  and make each item its own child block (as `testimonial-grid` → `testimonial`,
+  `stat-grid` → `stat`, `steps` → `step` do). You get the `+` appender, drag-reorder,
+  per-item selection, and Site-Editor styling for free — a custom repeater loses all of it.
 
 ## Environment
 
@@ -78,7 +103,8 @@ layer owns this?" Short version:
 
 ## Verifying work
 
-1. `composer lint` · `npm run lint:js` · `npm run lint:blocks` · `npm run lint:colors`
+1. `composer lint` (PHP) · `npm run lint:js` (JS/TS). No color literals in custom block
+   CSS — use `var(--wp--preset--…)` tokens (this is a manual rule; there's no linter for it).
 2. PHPUnit:
    `npx wp-env run tests-wordpress --env-cwd=wp-content/themes/pediment-child-theme vendor/bin/phpunit`
 3. Playwright: `npm run e2e`
