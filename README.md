@@ -9,7 +9,8 @@ site. When you spin up a client child theme from it, run the **`initialize`** sk
 the new repo: it pulls the framework docs and the block-catalog generator from the template,
 installs a client-facing `AGENTS.md`, generates the block catalog, and checks the parent
 version. Later, run the **`update`** skill to pull new framework docs and starter blocks as
-the template evolves. (Both skills live in `.claude/skills/` and ship with the template.)
+the template evolves. The canonical skills live in `skills/` and ship with the template;
+`.claude/skills` is a compatibility symlink for Claude Code discovery.
 
 ## Install order on a fresh WordPress
 
