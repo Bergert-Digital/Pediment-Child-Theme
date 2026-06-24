@@ -25,7 +25,7 @@ what the builder intended or whether a section is expected to pass.
 - **Ordered section list:**
 {{SECTION_LIST}}
   (one entry per line: `<label>: <brief description>`, in top-to-bottom order)
-- **Rubric:** `.claude/skills/shared/visual-qa.md`
+- **Rubric:** `skills/shared/visual-qa.md`
   Read this file now before proceeding. It defines every scoring category and the pass bar.
 
 ## What you must do

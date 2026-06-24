@@ -1,7 +1,7 @@
 # AGENTS.md — pediment-child-theme
 
-Project-level agent instructions for this child theme. User-level `~/.claude/CLAUDE.md`
-and explicit user requests take precedence over this file.
+Project-level agent instructions for this child theme. User-level or tool-specific agent
+instructions and explicit user requests take precedence over this file.
 
 ## Two repos, two roles
 

@@ -210,7 +210,7 @@ Record the live URL (e.g. `http://localhost:8900/?page_id=<id>`).
 ### 7. Fidelity gate loop
 
 Dispatch the independent fidelity critic using the template in
-`.claude/skills/shared/fidelity-critic-prompt.md`. Fill the placeholders:
+`skills/shared/fidelity-critic-prompt.md`. Fill the placeholders:
 
 - `{{BUILT_PAGE_URL}}` — the live page URL captured in step 6c
 - `{{SOURCE_URL}}` — the original source URL
@@ -218,7 +218,7 @@ Dispatch the independent fidelity critic using the template in
   one per line as `<label>: <brief description>`
 
 The critic evaluates blind against the rubric in
-`.claude/skills/shared/visual-qa.md`. Do not add any pre-judgment or hints.
+`skills/shared/visual-qa.md`. Do not add any pre-judgment or hints.
 
 **Capture rules (enforced by the critic, also enforced here when re-rendering):**
 - After navigating to a section, **wait ≥ 1.5 s** after it enters the viewport
@@ -269,7 +269,7 @@ Once `overallPass: true`:
 | **Media references** | All images must be imported via `npx wp-env run cli wp media import --porcelain` and referenced by their returned attachment ID. Never hotlink the original source URL in final markup. |
 | **CSS token discipline** | Any new block CSS must use `var(--wp--preset--…)` only. No color literals, no hard-coded hex values. |
 | **Theme slug** | Resolve dynamically: `basename $(pwd)`. Do not hard-code. |
-| **Commit convention** | Conventional commit, ≤ 60-char summary, stage files by name, trailer: `Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>` |
+| **Commit convention** | Conventional commit, ≤ 60-char summary, stage files by name, include the repo-required `Co-Authored-By` trailer for the agent/runtime that performed the work. |
 
 ---
 

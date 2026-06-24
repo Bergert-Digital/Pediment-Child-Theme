@@ -230,7 +230,7 @@ Capture three screenshots:
 Save to `.context/port-site/screenshots/`.
 
 **6b. Dispatch the fidelity critic** using the template in
-`.claude/skills/shared/fidelity-critic-prompt.md`. Scope it to brand fidelity:
+`skills/shared/fidelity-critic-prompt.md`. Scope it to brand fidelity:
 
 Fill placeholders:
 - `{{BUILT_PAGE_URL}}`: `http://localhost:8900/`
@@ -258,11 +258,12 @@ Stage and commit the two brand artifacts:
 git add theme.json "assets/fonts/$FONT_FILE"
 git commit -m "feat(brand): apply <ClientName> brand tokens and webfont
 
-Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+Co-Authored-By: <Agent Name> <agent@example.com>"
 ```
 
-Replace `<ClientName>` with the client's domain or name. Do not commit anything
-under `.context/` (gitignored).
+Replace `<ClientName>` with the client's domain or name, and use the
+`Co-Authored-By` identity required by the agent/runtime performing the work. Do
+not commit anything under `.context/` (gitignored).
 
 ---
 
