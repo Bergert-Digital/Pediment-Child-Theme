@@ -3,25 +3,42 @@
 Project-level agent instructions for this child theme. User-level `~/.claude/CLAUDE.md`
 and explicit user requests take precedence over this file.
 
-## What this project is
+## Two repos, two roles
 
-A **child theme** of the [Pediment](https://github.com/bergert/pediment) FSE block theme.
-The parent ships as an installed WordPress theme (zip) — you do **not** edit it. The
-optional [`pediment-ai`](https://github.com/bergert/pediment-ai) plugin is installed
-separately. The full stack on a running site:
+This file ships in two very different kinds of repo. Know which one you are in:
+
+- **The template — `Bergert-Digital/Pediment-Child-Theme` (this repo when you cloned the
+  template). The upstream source of truth.** You improve the reusable agency starter here:
+  starter blocks, docs, and tooling. **Nothing in the template is installed on a client
+  site.** `src/blocks/` holds *reference / starter* blocks meant to be copied and adapted
+  downstream — not a specific client's production blocks.
+- **A client theme — a downstream repo created from this template.** *That* repo is the
+  per-client child theme that gets installed on the client's WordPress site. There you
+  build the client's pages, own its `theme.json`, and add client-specific blocks. A client
+  repo refreshes framework docs and starter blocks from the template with the **`update`**
+  skill, and is first wired up with the **`initialize`** skill.
+
+**If you are reading this in the template repo, you are in the first role — you are not
+building a specific client's site.**
+
+### The stack underneath both
+
+Both roles sit on the same stack. A **child theme** of the
+[Pediment](https://github.com/bergert/pediment) FSE block theme. The parent ships as an
+installed WordPress theme (zip) — you do **not** edit it. The optional
+[`pediment-ai`](https://github.com/bergert/pediment-ai) plugin is installed separately.
 
 ```
 WordPress + parent theme (pediment, installed)        ← framework defaults, READ-ONLY
-                       + this child theme (active)    ← per-client overrides, your working surface
+                       + child theme (active)          ← overrides; the client repo's surface
                        + pediment-ai plugin (optional)
 ```
 
-**Everything you change lives in this repo.** The parent is a dependency, like a
-JavaScript package — you read it for reference and override what you need from the child.
-
-To inspect parent defaults, read the installed files in your local WordPress at
-`wp-content/themes/pediment/theme.json` (and `…/assets/css/theme.css`, `…/build/blocks/`).
-Or browse the source on GitHub: <https://github.com/bergert/pediment>.
+The parent is a dependency, like a JavaScript package — you read it for reference and
+override what you need from the child. To inspect parent defaults, read the installed files
+in your local WordPress at `wp-content/themes/pediment/theme.json` (and
+`…/assets/css/theme.css`, `…/build/blocks/`). Or browse the source on GitHub:
+<https://github.com/bergert/pediment>.
 
 ## Hard rules
 
@@ -64,6 +81,11 @@ Two docs orient you before you touch anything:
 | New client-specific block | **Child** | `src/blocks/<block>/` (worked example: `src/blocks/promo-banner/`) |
 | Framework default (every Pediment site should get it) | **Upstream** | File an issue/PR against `bergert/pediment` on GitHub |
 | Bug in a Pediment-shipped block | **Upstream** | Same |
+
+> **Template vs. client:** the **Child** rows above describe work done in a **client repo**
+> (per-client `theme.json`, the client's own `src/blocks/`). In the **template** you are
+> instead authoring *reusable starter* blocks and the docs/tooling that client repos pull
+> via the `update` skill — not one client's production content.
 
 ## Authoring a block editor
 

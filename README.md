@@ -2,6 +2,15 @@
 
 The agency starting point. A child theme of [Pediment](https://github.com/bergert/pediment). Fork or download as a zip, rename it, add your blocks and `theme.json` overrides, and push to your own git for per-client install.
 
+## Starting a client theme from this template
+
+This repo is the **template** — the agency starting point, not a theme installed on any
+site. When you spin up a client child theme from it, run the **`initialize`** skill first in
+the new repo: it pulls the framework docs and the block-catalog generator from the template,
+installs a client-facing `AGENTS.md`, generates the block catalog, and checks the parent
+version. Later, run the **`update`** skill to pull new framework docs and starter blocks as
+the template evolves. (Both skills live in `.claude/skills/` and ship with the template.)
+
 ## Install order on a fresh WordPress
 
 WordPress has no automatic theme-dependency resolution, so order matters:
