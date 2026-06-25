@@ -39,13 +39,11 @@ jobs:
         with:
           repository: Bergert-Digital/pediment
           ref: development
-          token: ${{ secrets.STARTER_THEME_PAT }}
           path: pediment
       - uses: actions/checkout@v6
         with:
           repository: Bergert-Digital/pediment-ai
           ref: development
-          token: ${{ secrets.STARTER_THEME_PAT }}
           path: pediment-ai
       - uses: actions/setup-node@v6
         with:
@@ -86,13 +84,11 @@ jobs:
         with:
           repository: Bergert-Digital/pediment
           ref: development
-          token: ${{ secrets.STARTER_THEME_PAT }}
           path: pediment
       - uses: actions/checkout@v6
         with:
           repository: Bergert-Digital/pediment-ai
           ref: development
-          token: ${{ secrets.STARTER_THEME_PAT }}
           path: pediment-ai
       - uses: actions/setup-node@v6
         with:
