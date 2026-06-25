@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.1](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.5.0...v0.5.1) (2026-06-25)
+
+
+### Bug Fixes
+
+* **ci:** drop empty STARTER_THEME_PAT now that upstream repos are public ([9015adc](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/9015adc93128cdc8b86decf6305194cc0b740374))
+* **ci:** drop empty STARTER_THEME_PAT now that upstream repos are public ([#29](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/29)) ([04638e1](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/04638e1b8e50ff34b42ec256d819df3fcedfd9e8))
+* **ci:** drop empty STARTER_THEME_PAT now that upstream repos are public ([#30](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/30)) ([fbceac8](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/fbceac80148557670dba15ee726d76ef44eafbcb))
+
 ## [0.5.0](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.4.0...v0.5.0) (2026-06-24)
 
 
