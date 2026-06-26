@@ -32,6 +32,9 @@ require_once __DIR__ . '/inc/seed.php';
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	\PedimentChild\Seed\Seed::register_cli();
 }
+if ( is_admin() ) {
+	\PedimentChild\Seed\Seed::register_admin();
+}
 
 /**
  * Register every block in the given directory (defaults to build/blocks).

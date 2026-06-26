@@ -37,6 +37,86 @@ class Seed {
 		\WP_CLI::success( $r['summary'] );
 	}
 
+	// -------------------------------------------------------------------------
+	// wp-admin entry point
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Register the Tools page + admin-post handler.
+	 */
+	public static function register_admin(): void {
+		add_action( 'admin_menu', array( __CLASS__, 'add_admin_page' ) );
+		add_action( 'admin_post_pediment_child_seed_run', array( __CLASS__, 'handle_admin_run' ) );
+	}
+
+	/** Add the "Seed content" page under Tools. */
+	public static function add_admin_page(): void {
+		add_management_page(
+			__( 'Seed content', 'pediment-child' ),
+			__( 'Seed content', 'pediment-child' ),
+			'manage_options',
+			'pediment-child-seed',
+			array( __CLASS__, 'render_admin_page' )
+		);
+	}
+
+	/** Render the Tools page: a description, a result notice, and the run button. */
+	public static function render_admin_page(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$key    = 'pediment_child_seed_result_' . get_current_user_id();
+		$result = get_transient( $key );
+		if ( false !== $result ) {
+			delete_transient( $key );
+		}
+		?>
+		<div class="wrap">
+			<h1><?php esc_html_e( 'Seed content', 'pediment-child' ); ?></h1>
+			<p style="max-width:640px">
+				<?php esc_html_e( 'Materializes this theme’s committed patterns and assets onto this install: imports the theme’s images into the Media Library, builds the pages from the committed patterns, sets the logo, and sets the front page.', 'pediment-child' ); ?>
+			</p>
+			<p style="max-width:640px">
+				<strong><?php esc_html_e( 'Note:', 'pediment-child' ); ?></strong>
+				<?php esc_html_e( 'This is idempotent and safe to re-run. Existing pages with those slugs are overwritten with the pattern content.', 'pediment-child' ); ?>
+			</p>
+
+			<?php if ( is_array( $result ) ) : ?>
+				<div class="notice notice-<?php echo $result['ok'] ? 'success' : 'warning'; ?> is-dismissible">
+					<p><strong><?php echo esc_html( $result['summary'] ); ?></strong></p>
+					<?php if ( ! empty( $result['log'] ) ) : ?>
+						<p>
+							<a href="#" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden;return false;"><?php esc_html_e( 'Show details', 'pediment-child' ); ?></a>
+							<textarea hidden readonly rows="10" style="width:100%;max-width:640px;font-family:monospace"><?php echo esc_textarea( implode( "\n", $result['log'] ) ); ?></textarea>
+						</p>
+					<?php endif; ?>
+				</div>
+			<?php endif; ?>
+
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<?php wp_nonce_field( 'pediment_child_seed_run' ); ?>
+				<input type="hidden" name="action" value="pediment_child_seed_run">
+				<?php submit_button( __( 'Seed content', 'pediment-child' ), 'primary', 'submit', false ); ?>
+			</form>
+		</div>
+		<?php
+	}
+
+	/** Handle the form POST: verify, run the seed, stash the result, redirect back. */
+	public static function handle_admin_run(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You are not allowed to do this.', 'pediment-child' ), '', array( 'response' => 403 ) );
+		}
+		check_admin_referer( 'pediment_child_seed_run' );
+
+		$result = self::seed_content();
+		set_transient( 'pediment_child_seed_result_' . get_current_user_id(), $result, MINUTE_IN_SECONDS );
+
+		wp_safe_redirect( add_query_arg( 'page', 'pediment-child-seed', admin_url( 'tools.php' ) ) );
+		exit;
+	}
+
 	/**
 	 * Seed the client's committed patterns + assets. Idempotent.
 	 *
