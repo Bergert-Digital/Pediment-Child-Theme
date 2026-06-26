@@ -28,6 +28,11 @@ require_once __DIR__ . '/inc/ThemeUpdater.php';
 
 require_once __DIR__ . '/inc/media.php';
 
+require_once __DIR__ . '/inc/seed.php';
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	\PedimentChild\Seed\Seed::register_cli();
+}
+
 /**
  * Register every block in the given directory (defaults to build/blocks).
  *
