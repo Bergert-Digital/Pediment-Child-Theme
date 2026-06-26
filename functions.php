@@ -26,6 +26,8 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 require_once __DIR__ . '/inc/ThemeUpdater.php';
 \PedimentChild\ThemeUpdater::register();
 
+require_once __DIR__ . '/inc/media.php';
+
 /**
  * Register every block in the given directory (defaults to build/blocks).
  *
