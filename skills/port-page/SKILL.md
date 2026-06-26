@@ -255,6 +255,9 @@ Once `overallPass: true`:
    - Export path: `.context/port/<slug>/final.html`
    - Fidelity-gate summary: rounds taken, any sections that required > 1 round
    - Any declined-section TODOs from `coverage.md`
+   - Recommended next step: run `/create-seed-content <slug>` to freeze this page
+     into a committed `patterns/<slug>.php` + `assets/img/`, so it can be re-seeded
+     onto any install.
 
 ---
 

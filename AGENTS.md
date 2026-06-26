@@ -104,6 +104,17 @@ catalog follows one split, and so must child blocks. Reference implementations:
   `stat-grid` → `stat`, `steps` → `step` do). You get the `+` appender, drag-reorder,
   per-item selection, and Site-Editor styling for free — a custom repeater loses all of it.
 
+## Seeding content
+
+The content-seeding framework is authored here in the template (`inc/media.php`, `inc/seed.php`,
+`inc/seed-demo.php`, `inc/nav-seed.php`, `assets/seed/`) and pulled into client repos via the
+`update` skill. In a **client repo** the loop is: build a page with the `port-page` skill →
+freeze it with the `create-seed-content` skill (writes `patterns/<slug>.php` + `assets/img/`,
+externalizing media through `pediment_child_media_id()`) → commit → on the live site, **Tools →
+Seed content** or `wp pediment-child seed` re-materializes it (idempotent). `wp pediment-child
+seed-demo` seeds the starter showcase. In the **template** you maintain the seeder PHP and the
+demo content under `assets/seed/`; `patterns/` is client-owned and stays empty here.
+
 ## Environment
 
 - **Local dev: wp-env at `localhost:8890`**, started from this directory. See

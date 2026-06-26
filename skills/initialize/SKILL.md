@@ -69,7 +69,21 @@ git checkout pediment-template/main -- src/blocks/promo-banner
 both, show the diff (`git diff pediment-template/main -- src/blocks/<name>`) and ask before
 replacing.
 
-### Step 4: Install the client-facing AGENTS.md
+### Step 4: Ensure the seed-content directories exist
+
+The seeder materializes committed page content from `patterns/` and images from `assets/img/`.
+A fresh client repo needs both present so the seed loop works from day one:
+
+```bash
+[ -e patterns ]    || { mkdir -p patterns    && touch patterns/.gitkeep; }
+[ -e assets/img ]  || { mkdir -p assets/img  && touch assets/img/.gitkeep; }
+```
+
+The seed loop: build a page with the `port-page` skill, freeze it with `create-seed-content`
+(writes `patterns/<slug>.php` + `assets/img/`), commit, then run `wp pediment-child seed` (or
+**Tools → Seed content**) on the live site to re-materialize it.
+
+### Step 5: Install the client-facing AGENTS.md
 
 The template carries a client-framed AGENTS.md at `templates/downstream/AGENTS.md`. Write it
 into this repo as `AGENTS.md`, **overwriting** any maintainer AGENTS.md inherited from the
@@ -82,7 +96,7 @@ git show pediment-template/main:templates/downstream/AGENTS.md > AGENTS.md
 Then replace the `<client>` placeholder in the first heading with the client's name (derive
 from the repo/directory basename if the user doesn't say).
 
-### Step 5: Generate the first block catalog
+### Step 6: Generate the first block catalog
 
 The catalog is per-repo (parent blocks from the running wp-env + this client's child blocks).
 Requires wp-env running:
@@ -96,7 +110,7 @@ npm run blocks:catalog
 you pulled in Step 2, so the regenerated catalog keeps the template's curated guidance while
 reflecting this client's actual installed blocks.
 
-### Step 6: Parent-version check
+### Step 7: Parent-version check
 
 The newest catalog blocks (`media-text`, `slider`, `stat-grid`, `testimonial`,
 `testimonial-grid`) are **parent** blocks — they only render if the installed parent is new
@@ -110,7 +124,7 @@ echo "client parent pin:";   grep -o 'pediment/releases/download/v[0-9.]*' .wp-e
 If the client's parent is older than the template's, tell the user to bump the parent pin in
 `.wp-env.json` (and restart wp-env) before using the new blocks. Do not bump it silently.
 
-### Step 7: Report
+### Step 8: Report
 
 Summarize what was pulled, the AGENTS.md install, the catalog result, and any parent-version
 warning. Remind the user to run the `update` skill later to stay in sync, and to commit the
