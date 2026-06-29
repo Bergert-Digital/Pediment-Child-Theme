@@ -16,10 +16,16 @@ if ( ! defined( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH' ) ) {
 
 require_once $_tests_dir . '/includes/functions.php';
 
+// The active theme's slug is its directory basename. In a forked/renamed
+// child theme (and in Conductor workspaces, where the dir is the workspace
+// name) that is NOT literally "pediment-child-theme", so derive it from the
+// repo root rather than hard-coding — matching the rest of the tooling.
+$pediment_child_theme_slug = basename( dirname( __DIR__, 2 ) );
+
 tests_add_filter(
 	'muplugins_loaded',
-	function () {
-		switch_theme( 'pediment-child-theme' );
+	function () use ( $pediment_child_theme_slug ) {
+		switch_theme( $pediment_child_theme_slug );
 	}
 );
 
