@@ -13,10 +13,14 @@
  * Assign-once, then stable: if the override already names a port that's still
  * free we keep it, so a workspace's URL doesn't churn between runs. We only
  * pick a new port when none is set or the old one is now occupied (e.g. by the
- * workspace's own already-running container — see isOurs note below).
+ * workspace's own already-running container).
  *
- * Importable: `ensurePorts()` returns `{ port, testsPort }`. As a CLI it writes
- * the override and prints the development URL.
+ * CI is exempt: runners are single-tenant, so there's nothing to collide with.
+ * When `CI` is set we return the base `.wp-env.json` ports and write nothing —
+ * keeping the run byte-identical to the committed config.
+ *
+ * Importable: `ensurePorts()` returns `{ port, testsPort }` (plus `ci: true`
+ * under CI). As a CLI it writes the override and prints the development URL.
  *
  * Exit codes:
  *   0 — ports ensured (printed as JSON-ish summary)
@@ -31,6 +35,7 @@ import process from 'node:process';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const overridePath = resolve(here, '..', '.wp-env.override.json');
+const basePath = resolve(here, '..', '.wp-env.json');
 
 /** Resolve true if nothing is currently bound to `port` on loopback. */
 function isFree(port) {
@@ -77,7 +82,24 @@ async function ensureOne(current, taken) {
 	return next;
 }
 
+async function readBasePorts() {
+	try {
+		const base = JSON.parse(await readFile(basePath, 'utf8'));
+		return { port: base.port ?? 8888, testsPort: base.testsPort ?? 8889 };
+	} catch {
+		return { port: 8888, testsPort: 8889 };
+	}
+}
+
 export async function ensurePorts() {
+	// CI runners are single-tenant — there's no sibling workspace to collide
+	// with — so keep the deterministic ports from .wp-env.json and never write
+	// an override. Randomizing in CI only adds a moving part for zero benefit
+	// (and keeps the run identical to the base config on `development`).
+	if (process.env.CI) {
+		return { ...(await readBasePorts()), ci: true };
+	}
+
 	const override = await readOverride();
 	const taken = new Set();
 
@@ -98,8 +120,9 @@ const invokedDirectly =
 
 if (invokedDirectly) {
 	ensurePorts()
-		.then(({ port, testsPort }) => {
-			console.log(`wp-env ports: dev :${port}  tests :${testsPort}`);
+		.then(({ port, testsPort, ci }) => {
+			const tag = ci ? ' (CI: base .wp-env.json ports)' : '';
+			console.log(`wp-env ports: dev :${port}  tests :${testsPort}${tag}`);
 			console.log(`  → http://localhost:${port}`);
 		})
 		.catch((err) => {
