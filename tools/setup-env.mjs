@@ -26,6 +26,7 @@
 import { execFileSync } from 'node:child_process';
 import { basename } from 'node:path';
 import process from 'node:process';
+import { ensurePorts } from './ensure-port.mjs';
 
 const themeSlug = basename(process.cwd());
 
@@ -35,6 +36,8 @@ const run = (label, cmd, args) => {
 };
 
 try {
+	const { port } = await ensurePorts();
+	console.log(`\n› using free host port :${port} (→ http://localhost:${port})`);
 	run('wp-env start', 'npx', ['wp-env', 'start']);
 	run(
 		`activate child theme (${themeSlug})`,
