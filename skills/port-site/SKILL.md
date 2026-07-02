@@ -8,8 +8,9 @@ description: Capture a client's brand from their live homepage (colors, fonts, r
 Re-skin the child theme to match a client's visual brand. Extract colors, fonts,
 and radii from their live homepage; normalize them through `tools/brand-extract.mjs`;
 download the webfont; patch `theme.json` via `tools/theme-reskin.mjs`; verify the
-result with the shared fidelity critic. Phase 2 (header/footer template parts) is a
-later step — this skill only establishes the brand token layer.
+result with the shared fidelity critic. The header is built next with the
+`build-header` skill; the footer remains a later step — this skill only establishes
+the brand token layer.
 
 **Argument:** the client's homepage URL (the public, rendered URL — not a staging
 URL that requires auth).
@@ -280,9 +281,10 @@ Tell the user:
 > Brand established. The child theme.json carries the client's color palette
 > and `<FamilyName>` webfont. You can now run `/port-page <url>` for each page.
 >
-> **Not yet done:** header, footer, and nav template parts are a later phase
-> and will be tackled separately — the site will render with the default
-> Pediment header/footer until those are ported.
+> **Next:** run `/build-header <homepage-url>` to build an editable header
+> (`parts/header.html` + the client's nav menu) as native Site-Editor blocks.
+> The footer is a later step. Until then the site renders the default Pediment
+> header/footer.
 
 ---
 
