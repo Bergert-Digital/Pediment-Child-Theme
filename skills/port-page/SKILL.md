@@ -17,6 +17,12 @@ Content, information architecture, and visual treatment are all preserved.
 
 All per-run files go under `.context/port/<slug>/` (gitignored).
 
+**Read the brief first.** If `docs/brief.md` exists, read it before rebuilding the page.
+Let the fidelity choices steer this skill: **Structure/layout** (*faithful* → replicate
+section-for-section; *facelift* → keep the shape, tidy it; *redesign* → free to re-compose)
+and **Content/copy** (*verbatim* / *light edits* / *rewrite*). If `docs/brief.md` is missing,
+suggest running `/discover` first.
+
 ---
 
 ## Pipeline — execute in order
