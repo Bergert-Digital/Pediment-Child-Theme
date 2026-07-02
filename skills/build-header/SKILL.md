@@ -18,6 +18,13 @@ Never a `core/html` dump — see the "editable chrome" hard rule in `AGENTS.md`.
 
 All per-run scratch files go under `.context/build-header/` (gitignored).
 
+**Read the brief first.** If `docs/brief.md` exists, read it before building the header.
+Let the fidelity choices steer this skill: **Structure/layout** (*faithful* → replicate the
+source header's layout and menu; *facelift* → keep the same elements, tidy the arrangement;
+*redesign* → free to re-compose) and **Visual brand** (*match* / *refresh* / *new*). This
+still stays within native, editable FSE blocks — the fidelity intent guides composition, not
+whether to use `core/html`. If `docs/brief.md` is missing, suggest running `/discover` first.
+
 ---
 
 ## Why this skill exists
