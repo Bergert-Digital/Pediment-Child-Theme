@@ -59,6 +59,15 @@ in your local WordPress at `wp-content/themes/pediment/theme.json` (and
   only the leaves you mean to. See [README.md](./README.md) for the exact rules.
 - **Don't validate for scenarios that can't happen.** Delete unreachable defensive code
   rather than "polishing" it.
+- **Structural chrome and page sections are native editable blocks — never a
+  `core/html` dump.** Anything a client will want to edit (headers, footers, nav,
+  page sections) must be composed from real FSE blocks (`site-logo`, `navigation`,
+  `buttons`, groups, and Pediment/child blocks) so it stays editable in **Appearance
+  → Editor**. `core/html` is a last resort reserved for genuinely un-blockable
+  third-party embeds — never for logos, menus, buttons, or layout. If you're
+  hand-writing `<header>`/`<nav>`/`<div class>` markup inside a `core/html` block,
+  stop and compose blocks instead. For the header specifically, the worked procedure
+  is the `build-header` skill.
 
 ## Where to make changes
 
