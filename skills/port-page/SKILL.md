@@ -7,7 +7,8 @@ description: Rebuild an existing (Elementor) page live in wp-env using Pediment 
 
 Rebuild ONE existing public page as native Pediment blocks, then iterate under an
 independent visual fidelity critic until every section faithfully matches the source.
-Content, information architecture, and visual treatment are all preserved.
+Content, information architecture, and visual treatment are all preserved — unless
+`docs/brief.md` says otherwise (a `facelift` or `redesign` brief loosens this).
 
 **Argument:** the source page URL. Derive `<slug>` from its path
 (`/about-us/` → `about-us`; homepage → `home`).
