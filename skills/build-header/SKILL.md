@@ -117,9 +117,11 @@ serialized `wp:navigation-link` markup and is the portable, re-seedable source o
    already-seeded entity, so update the existing entity directly for verification:
    ```bash
    NAV_ID=$(npx wp-env run cli wp post list --post_type=wp_navigation --posts_per_page=1 --field=ID --meta_key=_pediment_seeded_nav)
-   # If NAV_ID is empty, fire the seed once by re-activating the theme:
-   #   npx wp-env run cli wp theme activate "$THEME_SLUG"
-   #   then re-read NAV_ID.
+   # If NAV_ID is empty, the entity has not been seeded yet — call the seeder
+   # directly (it is idempotent), then re-read NAV_ID. Do NOT "re-activate the
+   # theme": after_switch_theme only fires on a real theme switch, so activating
+   # the already-active child theme is a no-op and will not seed.
+   #   npx wp-env run cli wp eval 'pediment_nav_seed_entity();'
    # Update its content to the new menu markup (pass the same markup pediment_nav_menu_blocks now returns):
    MENU=$(cat .context/build-header/menu-blocks.html)
    npx wp-env run cli wp post update "$NAV_ID" --post_content="$MENU"
@@ -152,8 +154,10 @@ a nonexistent target.
 ### 7. Editability self-check (enforce the hard rule)
 
 - Assert **zero** `core/html`: `! grep -q "wp:html" parts/header.html` (must succeed).
-- Assert the logo is `wp:site-logo`, the menu is `wp:navigation`, and any CTA is
-  `wp:button`: `grep -q "wp:site-logo" parts/header.html && grep -q "wp:navigation" parts/header.html`.
+- Assert the logo is `wp:site-logo` and the menu is `wp:navigation`:
+  `grep -q "wp:site-logo" parts/header.html && grep -q "wp:navigation" parts/header.html`.
+  A CTA, when present, is a `wp:button` — an optional element, so it is covered by the
+  zero-`core/html` assertion above rather than a required grep.
 - If any of logo/menu/CTA is hand-rolled HTML, the check fails — recompose from blocks
   and repeat from step 4.
 
