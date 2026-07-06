@@ -43,6 +43,23 @@ edit the installed parent.
   canvas (`RichText`); media/URLs/config in the sidebar (`InspectorControls`); repeating
   items via native `InnerBlocks`. See the template's authoring guidance.
 
+## Seeding content
+
+This client's page content lives committed in the repo as `patterns/<slug>.php`, with images in
+`assets/img/` referenced by filename through `pediment_child_media_id()` — so a page is portable
+across installs. The loop:
+
+1. Build a page live with the **`port-page`** skill.
+2. Freeze it with the **`create-seed-content`** skill — writes `patterns/<slug>.php` and copies
+   its images into `assets/img/`, externalizing media via `pediment_child_media_id()`.
+3. Commit the resulting `patterns/<slug>.php` + `assets/img/`.
+4. On the live site, **Tools → Seed content** (or `wp pediment-child seed`) re-materializes the
+   committed patterns: imports the images, builds the pages, sets the logo and front page.
+   Idempotent and safe to re-run.
+
+`wp pediment-child seed-demo` seeds the starter showcase pages instead — useful on a fresh copy
+before this client has its own committed patterns.
+
 ## Keeping in sync with the template
 
 Run the **`update`** skill to pull new framework docs and starter blocks from the template.

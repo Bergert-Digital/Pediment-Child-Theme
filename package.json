@@ -7,7 +7,7 @@
     "build": "wp-scripts build --webpack-src-dir=src/blocks --output-path=build/blocks",
     "lint:js": "wp-scripts lint-js src/",
     "e2e": "playwright test",
-    "env:start": "wp-env start",
+    "env:start": "node tools/ensure-port.mjs && wp-env start",
     "env:setup": "node tools/setup-env.mjs",
     "env:stop": "wp-env stop",
     "env:dev": "node tools/wp-env-mode.mjs dev",

@@ -66,7 +66,27 @@ git checkout pediment-template/main -- src/blocks/<name> # adopt (only on approv
 show the diff and ask — the client's version wins unless the user explicitly takes the
 template's.
 
-### Step 4: Regenerate the catalog
+### Step 4: Review-and-adopt the seeder framework
+
+The content-seeding framework ships as template PHP: `inc/media.php` (the
+`pediment_child_media_id()` resolver), `inc/seed.php` (the `wp pediment-child seed` core +
+Tools → "Seed content" button), `inc/seed-demo.php` (`wp pediment-child seed-demo` showcase),
+`inc/nav-seed.php` (default-nav seeding), and the `assets/seed/` demo assets. Diff and adopt
+the same way as blocks:
+
+```bash
+git diff HEAD pediment-template/main -- inc/media.php inc/seed.php inc/seed-demo.php inc/nav-seed.php assets/seed/
+git checkout pediment-template/main -- inc/media.php inc/seed.php inc/seed-demo.php inc/nav-seed.php assets/seed/  # adopt (only on approval)
+```
+
+**Never clobber a client's customized `inc/seed.php` or `patterns/`.** `patterns/` is
+client-owned content (frozen by the `create-seed-content` skill) — this skill never touches
+it. If `inc/seed.php` differs because the client extended it, show the diff and ask; the
+client's version wins unless the user explicitly takes the template's. If the client requires
+the seeder, ensure `functions.php` wires up the new files (require + CLI/admin registration) —
+show that diff against the template too.
+
+### Step 5: Regenerate the catalog
 
 ```bash
 npx wp-env run cli wp option get siteurl >/dev/null 2>&1 || npm run env:start
@@ -76,7 +96,7 @@ npm run blocks:catalog
 This reflects the client's installed parent + their own blocks, preserving the curated
 "Use when" notes from the doc pulled in Step 2.
 
-### Step 5: Offer to refresh AGENTS.md (opt-in)
+### Step 6: Offer to refresh AGENTS.md (opt-in)
 
 The client may have customized `AGENTS.md`, so do **not** overwrite it automatically. Show the
 diff and ask:
@@ -89,7 +109,7 @@ If the user approves, write the template payload over `AGENTS.md`
 (`git show pediment-template/main:templates/downstream/AGENTS.md > AGENTS.md`) and re-apply the
 client's name in the first heading.
 
-### Step 6: Parent-version check
+### Step 7: Parent-version check
 
 ```bash
 echo "template parent pin:"; git show pediment-template/main:.wp-env.json | grep -o 'pediment/releases/download/v[0-9.]*'
@@ -99,7 +119,8 @@ echo "client parent pin:";   grep -o 'pediment/releases/download/v[0-9.]*' .wp-e
 If the client's parent is older than the template's, warn that newly-documented blocks may
 not render until the parent pin is bumped (and wp-env restarted). Do not bump it silently.
 
-### Step 7: Report
+### Step 8: Report
 
-Summarize: docs updated, blocks adopted/skipped, catalog regenerated, AGENTS.md refreshed or
-left as-is, and any parent-version warning. Remind the user to review and commit.
+Summarize: docs updated, blocks adopted/skipped, seeder framework adopted/skipped, catalog
+regenerated, AGENTS.md refreshed or left as-is, and any parent-version warning. Remind the
+user to review and commit.

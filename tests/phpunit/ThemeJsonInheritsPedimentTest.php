@@ -32,8 +32,12 @@ class ThemeJsonInheritsPedimentTest extends WP_UnitTestCase {
 	}
 
 	private function assert_child_theme_active() {
+		// The child theme's slug is its directory basename — which, in a
+		// fork/rename or a Conductor workspace, is NOT literally
+		// "pediment-child-theme". Derive it the same way the bootstrap and
+		// tooling do, rather than hard-coding.
 		$this->assertSame(
-			'pediment-child-theme',
+			basename( dirname( __DIR__, 2 ) ),
 			get_stylesheet(),
 			'These Pediment-inheritance guards are only meaningful with the child theme active.'
 		);

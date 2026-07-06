@@ -59,11 +59,23 @@ in your local WordPress at `wp-content/themes/pediment/theme.json` (and
   only the leaves you mean to. See [README.md](./README.md) for the exact rules.
 - **Don't validate for scenarios that can't happen.** Delete unreachable defensive code
   rather than "polishing" it.
+- **Structural chrome and page sections are native editable blocks — never a
+  `core/html` dump.** Anything a client will want to edit (headers, footers, nav,
+  page sections) must be composed from real FSE blocks (`site-logo`, `navigation`,
+  `buttons`, groups, and Pediment/child blocks) so it stays editable in **Appearance
+  → Editor**. `core/html` is a last resort reserved for genuinely un-blockable
+  third-party embeds — never for logos, menus, buttons, or layout. If you're
+  hand-writing `<header>`/`<nav>`/`<div class>` markup inside a `core/html` block,
+  stop and compose blocks instead. For the header specifically, the worked procedure
+  is the `build-header` skill.
 
 ## Where to make changes
 
 Two docs orient you before you touch anything:
 
+- **Starting a port?** Read [docs/brief.md](./docs/brief.md) first — it records the client's
+  fidelity intent (faithful port / facelift / redesign), the pages in scope, and hard
+  constraints. If it is missing, run the `/discover` skill to create it.
 - **Building a page, or picking which block to use?** Read
   [docs/PEDIMENT-BLOCKS.md](./docs/PEDIMENT-BLOCKS.md) — the generated catalog of every
   available block (parent + child), each with a "Use when" note and its attributes. It's
@@ -103,6 +115,17 @@ catalog follows one split, and so must child blocks. Reference implementations:
   and make each item its own child block (as `testimonial-grid` → `testimonial`,
   `stat-grid` → `stat`, `steps` → `step` do). You get the `+` appender, drag-reorder,
   per-item selection, and Site-Editor styling for free — a custom repeater loses all of it.
+
+## Seeding content
+
+The content-seeding framework is authored here in the template (`inc/media.php`, `inc/seed.php`,
+`inc/seed-demo.php`, `inc/nav-seed.php`, `assets/seed/`) and pulled into client repos via the
+`update` skill. In a **client repo** the loop is: build a page with the `port-page` skill →
+freeze it with the `create-seed-content` skill (writes `patterns/<slug>.php` + `assets/img/`,
+externalizing media through `pediment_child_media_id()`) → commit → on the live site, **Tools →
+Seed content** or `wp pediment-child seed` re-materializes it (idempotent). `wp pediment-child
+seed-demo` seeds the starter showcase. In the **template** you maintain the seeder PHP and the
+demo content under `assets/seed/`; `patterns/` is client-owned and stays empty here.
 
 ## Environment
 

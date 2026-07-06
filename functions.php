@@ -26,6 +26,19 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 require_once __DIR__ . '/inc/ThemeUpdater.php';
 \PedimentChild\ThemeUpdater::register();
 
+require_once __DIR__ . '/inc/media.php';
+
+require_once __DIR__ . '/inc/seed.php';
+require_once __DIR__ . '/inc/seed-demo.php';
+require_once __DIR__ . '/inc/nav-seed.php';
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	\PedimentChild\Seed\Seed::register_cli();
+	\PedimentChild\Seed\Demo::register_cli();
+}
+if ( is_admin() ) {
+	\PedimentChild\Seed\Seed::register_admin();
+}
+
 /**
  * Register every block in the given directory (defaults to build/blocks).
  *

@@ -172,13 +172,20 @@ export async function publishAndGetPermalink(page: Page): Promise<string> {
       await starterModal.waitFor({ state: 'hidden', timeout: 3_000 }).catch(() => {});
     }
     await page.getByRole('button', { name: /^Publish$/i }).first().click({ timeout: 5_000 });
+    // Wait for the SERVER to persist the publish, not just the editor's optimistic
+    // edit. `getEditedPostAttribute('status')` flips to 'publish' the instant the
+    // button is clicked — measured ~65ms before `getCurrentPost()` reflects the
+    // saved post — so waiting on it lets the caller read the permalink and navigate
+    // while the page is still unsaved, 404ing on slower (CI) runners. Instead wait
+    // for `isCurrentPostPublished()` (reads the saved post) once `isSavingPost()`
+    // has gone false (the save round-trip finished).
     await page.waitForFunction(
       () => {
         const ed = (window as any).wp?.data?.select?.('core/editor');
-        return !!ed && ed.getEditedPostAttribute('status') === 'publish';
+        return !!ed && !ed.isSavingPost() && ed.isCurrentPostPublished();
       },
       undefined,
-      { timeout: 8_000 },
+      { timeout: 15_000 },
     );
   }).toPass({ timeout: 60_000 });
 
