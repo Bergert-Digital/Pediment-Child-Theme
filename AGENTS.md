@@ -73,6 +73,9 @@ in your local WordPress at `wp-content/themes/pediment/theme.json` (and
 
 Two docs orient you before you touch anything:
 
+- **Starting a port?** Read [docs/brief.md](./docs/brief.md) first — it records the client's
+  fidelity intent (faithful port / facelift / redesign), the pages in scope, and hard
+  constraints. If it is missing, run the `/discover` skill to create it.
 - **Building a page, or picking which block to use?** Read
   [docs/PEDIMENT-BLOCKS.md](./docs/PEDIMENT-BLOCKS.md) — the generated catalog of every
   available block (parent + child), each with a "Use when" note and its attributes. It's

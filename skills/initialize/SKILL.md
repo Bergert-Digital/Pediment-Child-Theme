@@ -128,4 +128,5 @@ If the client's parent is older than the template's, tell the user to bump the p
 
 Summarize what was pulled, the AGENTS.md install, the catalog result, and any parent-version
 warning. Remind the user to run the `update` skill later to stay in sync, and to commit the
-changes.
+changes. Point them to the next step: run `/discover` to capture the client's site intent
+(faithful port / facelift / redesign), then `/port-site`.

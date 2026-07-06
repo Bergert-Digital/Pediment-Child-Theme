@@ -17,6 +17,12 @@ URL that requires auth).
 
 All per-run scratch files go under `.context/port-site/` (gitignored).
 
+**Read the brief first.** If `docs/brief.md` exists, read it before capturing the brand.
+Let the **Visual brand** fidelity choice steer this skill: *match* → reproduce the source's
+colors/type/spacing as closely as possible; *refresh* → keep the brand's character but
+modernize; *new brand* → treat the source only as loose input. If `docs/brief.md` is
+missing, suggest running `/discover` first.
+
 ---
 
 ## Preconditions (check first, stop if unmet)
