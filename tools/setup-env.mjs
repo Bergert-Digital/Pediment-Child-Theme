@@ -40,6 +40,38 @@ const run = (label, cmd, args) => {
 	execFileSync(cmd, args, { stdio: 'inherit' });
 };
 
+// Strip WordPress's bundled default themes. The `WordPress/WordPress` checkout
+// ships every `twenty*` theme, and `wp-env start` re-installs them on each
+// fresh provision (e.g. a new Conductor workspace). Deleting them here — after
+// the child theme is active, so none is in use — keeps them gone for good.
+// Idempotent: on re-runs the list is empty and this is a no-op.
+const pruneDefaultThemes = () => {
+	console.log('\n› prune bundled default themes');
+	const names = execFileSync(
+		'npx',
+		['wp-env', 'run', 'cli', 'wp', 'theme', 'list', '--field=name'],
+		{ encoding: 'utf8' }
+	)
+		.split('\n')
+		.map((n) => n.trim())
+		.filter((n) => /^twenty/.test(n));
+	if (names.length === 0) {
+		console.log('  (none present)');
+		return;
+	}
+	// One theme per call: `wp-env run cli` collapses trailing args into a
+	// single quoted string, so `wp theme delete a b c` would look for one
+	// theme literally named "a b c" and delete nothing.
+	for (const name of names) {
+		console.log(`  deleting ${name}`);
+		execFileSync(
+			'npx',
+			['wp-env', 'run', 'cli', 'wp', 'theme', 'delete', name],
+			{ stdio: 'inherit' }
+		);
+	}
+};
+
 try {
 	const { port } = await ensurePorts();
 	console.log(`\n› using free host port :${port} (→ http://localhost:${port})`);
@@ -49,6 +81,7 @@ try {
 		'npx',
 		['wp-env', 'run', 'cli', 'wp', 'theme', 'activate', themeSlug]
 	);
+	pruneDefaultThemes();
 	run(
 		hasPatterns ? 'seed client content' : 'seed demo content',
 		'npx',
