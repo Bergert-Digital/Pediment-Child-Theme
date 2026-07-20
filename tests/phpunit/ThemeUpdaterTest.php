@@ -22,4 +22,10 @@ class ThemeUpdaterTest extends WP_UnitTestCase {
 		$pattern = \PedimentChild\ThemeUpdater::assetPattern( 'acme' );
 		$this->assertDoesNotMatchRegularExpression( $pattern, 'acme.zip.bak' );
 	}
+
+	public function test_asset_pattern_is_anchored_at_start() {
+		// Must not match an asset that merely ends in "<slug>.zip".
+		$pattern = \PedimentChild\ThemeUpdater::assetPattern( 'acme' );
+		$this->assertDoesNotMatchRegularExpression( $pattern, 'not-acme.zip' );
+	}
 }

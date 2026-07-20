@@ -71,8 +71,11 @@ final class ThemeUpdater {
 	 * The released zip is named "<slug>.zip" (see build-release-zip.yml) and the
 	 * installed folder — hence get_stylesheet() — equals that slug, so slug,
 	 * folder, zip name, and this pattern all agree on a fresh install.
+	 *
+	 * Anchored at both ends so it matches "<slug>.zip" exactly and never a
+	 * longer asset that merely ends in it (e.g. "not-<slug>.zip").
 	 */
 	public static function assetPattern( string $slug ): string {
-		return '/' . preg_quote( $slug, '/' ) . '\.zip$/';
+		return '/^' . preg_quote( $slug, '/' ) . '\.zip$/';
 	}
 }
