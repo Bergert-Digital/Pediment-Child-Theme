@@ -65,13 +65,20 @@ Rule of thumb: omit a subtree to keep Pediment; declare an array and you own all
 
 ## First-fork rename checklist
 
-Grep-replace these tokens with your client's identity before first client ship:
+Set your client's identity before first client ship:
 
-- `pediment-child-theme` → your theme slug (also rename the repo/directory)
-- `Pediment Child Theme` → your theme's display name (`style.css` `Theme Name`)
-- `pediment-child` → your text domain (in `style.css`, `functions.php`, `block.json`, `edit.tsx`, CSS classes)
-- `PedimentChild` → your PHP `@package` tag
-- `pediment_child_register_blocks` / `PEDIMENT_CHILD_*` → your prefixed function/constant names
+- `Text Domain` in `style.css` → your slug. **This is the single source of truth
+  for the release:** the built zip is named `<slug>.zip`, it installs into a
+  `<slug>/` folder, and `inc/ThemeUpdater.php` derives its update slug + release-asset
+  regex from `get_stylesheet()` — all from this one value, no other edits.
+- `REPO_URL` in `inc/ThemeUpdater.php` → your client's GitHub repo (PUC needs the
+  real repo; this is the one release setting that can't be auto-derived).
+- `Pediment Child Theme` → your theme's display name (`style.css` `Theme Name`).
+- `pediment-child` → also your text-domain string in `functions.php`, `block.json`,
+  `edit.tsx`, and CSS classes (keep it equal to the `Text Domain` slug above).
+- `PedimentChild` → your PHP `@package` tag.
+- `pediment_child_register_blocks` / `PEDIMENT_CHILD_*` → your prefixed function/constant names.
+- (Optional) `package-name` in `release-please-config.json` → your name, for release-note titles.
 
 Then **replace or delete** `src/blocks/promo-banner/` — it's a worked example, not production content.
 
