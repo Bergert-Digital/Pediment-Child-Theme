@@ -94,10 +94,15 @@ final class UpdateToken {
 	}
 
 	/**
-	 * Encrypt and persist a token. False if libsodium is unavailable or empty.
+	 * Encrypt and persist a token. False if libsodium is unavailable, the key
+	 * material is empty (would silently derive a guessable key), or empty.
 	 */
 	public static function store( string $pat ): bool {
 		if ( ! function_exists( 'sodium_crypto_secretbox' ) ) {
+			return false;
+		}
+		// Refuse to store rather than encrypt with a guessable all-empty key.
+		if ( '' === self::activeKeyMaterial() ) {
 			return false;
 		}
 		$pat = trim( $pat );
@@ -137,9 +142,19 @@ final class UpdateToken {
 	 * Resolve the live encryption key from wp-config secrets.
 	 */
 	private static function activeKey(): string {
+		return self::deriveKey( self::activeKeyMaterial() );
+	}
+
+	/**
+	 * Key material behind activeKey(): an explicit override, else AUTH_KEY +
+	 * SECURE_AUTH_KEY. Both salt constants are always defined by modern
+	 * WordPress, but each is read defensively so a somehow-undefined salt
+	 * degrades toward '' (caught by the store() guard) rather than fataling.
+	 */
+	private static function activeKeyMaterial(): string {
 		$override = defined( self::SECRET_CONSTANT ) ? (string) constant( self::SECRET_CONSTANT ) : '';
 		$salt1    = defined( 'AUTH_KEY' ) ? (string) constant( 'AUTH_KEY' ) : '';
-		$salt2    = defined( 'SECRET_KEY' ) ? (string) constant( 'SECRET_KEY' ) : '';
-		return self::deriveKey( self::keyMaterial( $override, $salt1, $salt2 ) );
+		$salt2    = defined( 'SECURE_AUTH_KEY' ) ? (string) constant( 'SECURE_AUTH_KEY' ) : '';
+		return self::keyMaterial( $override, $salt1, $salt2 );
 	}
 }

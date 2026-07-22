@@ -96,7 +96,7 @@ fork's repo) one of two ways:
   `wp-config.php`. The token never touches the database.
 - **Settings screen (self-serve).** Settings → Pediment Theme → **Updates** →
   paste the token. It is encrypted at rest with `sodium_crypto_secretbox` (keyed
-  off the site's `AUTH_KEY`/`SECRET_KEY`, or a `PEDIMENT_CHILD_UPDATE_SECRET`
+  off the site's `AUTH_KEY`/`SECURE_AUTH_KEY`, or a `PEDIMENT_CHILD_UPDATE_SECRET`
   override) and never shown again. Rotating those salts invalidates a stored
   token — just re-enter it.
 

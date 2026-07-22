@@ -119,6 +119,7 @@ function pediment_child_render_updates_tab(): void {
 		<p><em><?php esc_html_e( 'Not configured.', 'pediment-child' ); ?></em></p>
 	<?php endif; ?>
 
+	<?php if ( ! $by_constant ) : ?>
 	<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 		<input type="hidden" name="action" value="pediment_child_save_update_token" />
 		<?php wp_nonce_field( 'pediment_child_save_update_token' ); ?>
@@ -134,6 +135,7 @@ function pediment_child_render_updates_tab(): void {
 		</table>
 		<?php submit_button( $configured ? __( 'Replace token', 'pediment-child' ) : __( 'Save token', 'pediment-child' ) ); ?>
 	</form>
+	<?php endif; ?>
 
 	<?php if ( $configured && ! $by_constant ) : ?>
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin-top:1em;">
