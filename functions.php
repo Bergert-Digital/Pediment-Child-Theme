@@ -38,6 +38,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 }
 if ( is_admin() ) {
 	\PedimentChild\Seed\Seed::register_admin();
+	require_once __DIR__ . '/inc/settings-updates.php';
 }
 
 /**
