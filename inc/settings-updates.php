@@ -142,6 +142,11 @@ function pediment_child_render_updates_tab(): void {
 			<?php submit_button( __( 'Remove token', 'pediment-child' ), 'delete', 'submit', false ); ?>
 		</form>
 	<?php endif; ?>
+
+	<p style="margin-top:1em;">
+		<button type="button" class="button" id="pediment-child-test-connection"><?php esc_html_e( 'Test connection', 'pediment-child' ); ?></button>
+		<span id="pediment-child-test-result" style="margin-left:.5em;"></span>
+	</p>
 	<?php
 }
 
@@ -186,4 +191,79 @@ function pediment_child_handle_remove_update_token(): void {
 	\PedimentChild\UpdateToken::remove();
 	add_settings_error( 'pediment_child_updates', 'removed', __( 'Update token removed.', 'pediment-child' ), 'success' );
 	pediment_child_updates_redirect();
+}
+
+add_action( 'wp_ajax_pediment_child_test_update_token', 'pediment_child_ajax_test_update_token' );
+/**
+ * "Test connection": probe the repo + latest release with the effective token.
+ */
+function pediment_child_ajax_test_update_token(): void {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_send_json_error( array( 'message' => __( 'Permission denied.', 'pediment-child' ) ), 403 );
+	}
+	check_ajax_referer( 'pediment_child_test_update_token' );
+
+	$resolved = \PedimentChild\UpdateToken::resolve();
+	if ( '' === $resolved['token'] ) {
+		wp_send_json_error( array( 'message' => __( 'No token configured. Save a token first, then test.', 'pediment-child' ) ) );
+	}
+
+	$base = 'https://api.github.com/repos/' . pediment_child_repo_api_path( \PedimentChild\ThemeUpdater::repoUrl() );
+	$args = array(
+		'timeout' => 15,
+		'headers' => array(
+			'Authorization' => 'Bearer ' . $resolved['token'],
+			'Accept'        => 'application/vnd.github+json',
+			'User-Agent'    => 'pediment-child-theme',
+		),
+	);
+
+	$repo = wp_remote_get( $base, $args );
+	if ( is_wp_error( $repo ) ) {
+		wp_send_json_error( array( 'message' => $repo->get_error_message() ) );
+	}
+	$rel        = wp_remote_get( $base . '/releases/latest', $args );
+	$rel_status = is_wp_error( $rel ) ? 0 : (int) wp_remote_retrieve_response_code( $rel );
+	$rel_body   = is_wp_error( $rel ) ? array() : (array) json_decode( (string) wp_remote_retrieve_body( $rel ), true );
+
+	$result = pediment_child_parse_probe_response(
+		(int) wp_remote_retrieve_response_code( $repo ),
+		$rel_status,
+		$rel_body,
+		\PedimentChild\ThemeUpdater::assetPattern( get_stylesheet() )
+	);
+
+	if ( $result['ok'] ) {
+		wp_send_json_success( $result );
+	}
+	wp_send_json_error( $result );
+}
+
+add_action( 'admin_enqueue_scripts', 'pediment_child_updates_enqueue' );
+/**
+ * Load the Test-connection script only on the settings page.
+ *
+ * @param string $hook Current admin page hook suffix.
+ */
+function pediment_child_updates_enqueue( string $hook ): void {
+	if ( 'settings_page_pediment-theme' !== $hook && 'settings_page_pediment-child-updates' !== $hook ) {
+		return;
+	}
+	wp_enqueue_script(
+		'pediment-child-update-token-test',
+		get_stylesheet_directory_uri() . '/assets/js/update-token-test.js',
+		array(),
+		PEDIMENT_CHILD_VERSION,
+		true
+	);
+	wp_localize_script(
+		'pediment-child-update-token-test',
+		'pedimentChildUpdateTest',
+		array(
+			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+			'nonce'   => wp_create_nonce( 'pediment_child_test_update_token' ),
+			'testing' => __( 'Testing…', 'pediment-child' ),
+			'label'   => __( 'Test connection', 'pediment-child' ),
+		)
+	);
 }
