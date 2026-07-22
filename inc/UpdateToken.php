@@ -68,6 +68,72 @@ final class UpdateToken {
 	}
 
 	/**
+	 * Pure precedence resolver: constant → env → option → none.
+	 *
+	 * @return array{token:string,source:string}
+	 */
+	public static function resolveFrom( ?string $constant, ?string $env, string $optionToken ): array {
+		if ( null !== $constant && '' !== $constant ) {
+			return array( 'token' => $constant, 'source' => 'constant' );
+		}
+		if ( null !== $env && '' !== $env ) {
+			return array( 'token' => $env, 'source' => 'env' );
+		}
+		if ( '' !== $optionToken ) {
+			return array( 'token' => $optionToken, 'source' => 'option' );
+		}
+		return array( 'token' => '', 'source' => 'none' );
+	}
+
+	/**
+	 * The stored token, decrypted, or '' when unset/undecryptable.
+	 */
+	public static function storedToken(): string {
+		$stored = (string) get_option( self::OPTION, '' );
+		return '' === $stored ? '' : self::decrypt( $stored );
+	}
+
+	/**
+	 * Encrypt and persist a token. False if libsodium is unavailable or empty.
+	 */
+	public static function store( string $pat ): bool {
+		if ( ! function_exists( 'sodium_crypto_secretbox' ) ) {
+			return false;
+		}
+		$pat = trim( $pat );
+		if ( '' === $pat ) {
+			return false;
+		}
+		return update_option( self::OPTION, self::encrypt( $pat ), false );
+	}
+
+	/**
+	 * Delete the stored token.
+	 */
+	public static function remove(): void {
+		delete_option( self::OPTION );
+	}
+
+	/**
+	 * Resolve the effective token from all sources, most trusted first.
+	 *
+	 * @return array{token:string,source:string}
+	 */
+	public static function resolve(): array {
+		$constant = defined( self::CONSTANT ) ? (string) constant( self::CONSTANT ) : null;
+		$env      = getenv( self::CONSTANT );
+		$env      = false === $env ? null : (string) $env;
+		return self::resolveFrom( $constant, $env, self::storedToken() );
+	}
+
+	/**
+	 * Whether any source yields a usable token.
+	 */
+	public static function isConfigured(): bool {
+		return '' !== self::resolve()['token'];
+	}
+
+	/**
 	 * Resolve the live encryption key from wp-config secrets.
 	 */
 	private static function activeKey(): string {

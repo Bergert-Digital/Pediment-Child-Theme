@@ -49,4 +49,55 @@ class UpdateTokenTest extends WP_UnitTestCase {
 		$this->assertSame( $k1, $k2 );
 		$this->assertSame( SODIUM_CRYPTO_SECRETBOX_KEYBYTES, strlen( $k1 ) );
 	}
+
+	public function test_resolve_from_precedence_order() {
+		$this->assertSame( 'constant', UpdateToken::resolveFrom( 'C', 'E', 'O' )['source'] );
+		$this->assertSame( 'C', UpdateToken::resolveFrom( 'C', 'E', 'O' )['token'] );
+		$this->assertSame( 'env', UpdateToken::resolveFrom( null, 'E', 'O' )['source'] );
+		$this->assertSame( 'env', UpdateToken::resolveFrom( '', 'E', 'O' )['source'] );
+		$this->assertSame( 'option', UpdateToken::resolveFrom( null, null, 'O' )['source'] );
+		$this->assertSame( 'option', UpdateToken::resolveFrom( '', '', 'O' )['source'] );
+		$none = UpdateToken::resolveFrom( null, null, '' );
+		$this->assertSame( 'none', $none['source'] );
+		$this->assertSame( '', $none['token'] );
+	}
+
+	public function test_store_and_stored_token_round_trip() {
+		$this->assertTrue( UpdateToken::store( 'github_pat_stored' ) );
+		$this->assertSame( 'github_pat_stored', UpdateToken::storedToken() );
+	}
+
+	public function test_store_rejects_empty() {
+		$this->assertFalse( UpdateToken::store( '   ' ) );
+	}
+
+	public function test_stored_token_empty_when_option_absent() {
+		delete_option( UpdateToken::OPTION );
+		$this->assertSame( '', UpdateToken::storedToken() );
+	}
+
+	public function test_remove_clears_option() {
+		UpdateToken::store( 'to-be-removed' );
+		UpdateToken::remove();
+		$this->assertSame( '', UpdateToken::storedToken() );
+		$this->assertFalse( UpdateToken::isConfigured() );
+	}
+
+	public function test_resolve_env_beats_option() {
+		UpdateToken::store( 'from-option' );
+		putenv( UpdateToken::CONSTANT . '=from-env' );
+		$resolved = UpdateToken::resolve();
+		putenv( UpdateToken::CONSTANT ); // unset so later tests are clean.
+		$this->assertSame( 'env', $resolved['source'] );
+		$this->assertSame( 'from-env', $resolved['token'] );
+	}
+
+	public function test_resolve_falls_back_to_option() {
+		putenv( UpdateToken::CONSTANT ); // ensure env unset.
+		UpdateToken::store( 'only-option' );
+		$resolved = UpdateToken::resolve();
+		$this->assertSame( 'option', $resolved['source'] );
+		$this->assertSame( 'only-option', $resolved['token'] );
+		$this->assertTrue( UpdateToken::isConfigured() );
+	}
 }
