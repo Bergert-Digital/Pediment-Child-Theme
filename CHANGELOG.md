@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.7.0](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.6.0...v0.7.0) (2026-07-23)
+
+
+### Features
+
+* **release:** name the release zip after the style.css Text Domain slug ([e4705f0](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/e4705f0d4d6ee33d2c9d91f8267cd8e18944b951))
+* **seed-demo:** use Pediment Forms for the contact page ([fa0ab18](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/fa0ab18b5dc114db984012d0d23ad15cb3fc3029))
+* update-token settings UI, release-zip identity, demo cleanup ([#43](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/43)) ([5594d04](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/5594d047831bf4b4b3401c753e90a3c3cdc8052e))
+* **updater:** derive PUC slug + asset regex from get_stylesheet() ([c96a6e3](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/c96a6e3f6d32834896cdb8f95db15883694a0ad7))
+* **updates:** add GitHub probe parser for Test connection ([094051a](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/094051ad34ce45077d56bb5e04220bd290f62895))
+* **updates:** add Test connection AJAX probe + button ([4ff2d1c](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/4ff2d1ccc4be6bc05c32d6cb5bf55aebd98ae2e0))
+* **updates:** add UpdateToken encryption core ([5eb4321](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/5eb432147ce60dfe9c6b37af0a9e233d6c6cc37b))
+* **updates:** add UpdateToken storage + precedence resolver ([9491bbe](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/9491bbe3b9bb55507cd7be2f707909b5d9e6b88d))
+* **updates:** add write-only token settings tab with save/remove ([54e6c64](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/54e6c643731e1f9af9c2d429b778053fd00c4c64))
+* **updates:** authenticate PUC with the resolved update token ([37a25ba](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/37a25ba911cc533eff0715bce5de0ea99676780f))
+* **updates:** wp-admin settings UI for the GitHub update token ([#42](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/42)) ([c4e2d37](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/c4e2d37e56f3a628b33f163c951ff7c8006f789e))
+
+
+### Bug Fixes
+
+* **updates:** derive key from SECURE_AUTH_KEY, guard empty key material, hide shadowed save form ([7177253](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/71772537c81a9b2979be7d4dcc565ce7bf3f9910))
+
 ## [0.6.0](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.5.1...v0.6.0) (2026-07-06)
 
 
