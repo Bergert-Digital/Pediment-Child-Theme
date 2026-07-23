@@ -63,6 +63,14 @@ final class ThemeUpdater {
 		if ( method_exists( $api, 'enableReleaseAssets' ) ) {
 			$api->enableReleaseAssets( self::assetPattern( $slug ) );
 		}
+
+		// Authenticate for private repos. Precedence: constant → env → stored
+		// option → none. Unset everywhere → no call → updates simply absent
+		// (same as an unauthenticated public repo), never a fatal.
+		$auth = UpdateToken::resolve();
+		if ( '' !== $auth['token'] && method_exists( $checker, 'setAuthentication' ) ) {
+			$checker->setAuthentication( $auth['token'] );
+		}
 	}
 
 	/**
@@ -77,5 +85,15 @@ final class ThemeUpdater {
 	 */
 	public static function assetPattern( string $slug ): string {
 		return '/^' . preg_quote( $slug, '/' ) . '\.zip$/';
+	}
+
+	/**
+	 * The GitHub repository URL that drives updates.
+	 *
+	 * Exposed so the settings "Test connection" probe hits the same repo the
+	 * updater installs from.
+	 */
+	public static function repoUrl(): string {
+		return self::REPO_URL;
 	}
 }

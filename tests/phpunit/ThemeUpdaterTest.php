@@ -28,4 +28,9 @@ class ThemeUpdaterTest extends WP_UnitTestCase {
 		$pattern = \PedimentChild\ThemeUpdater::assetPattern( 'acme' );
 		$this->assertDoesNotMatchRegularExpression( $pattern, 'not-acme.zip' );
 	}
+
+	public function test_repo_url_is_a_github_url() {
+		$url = \PedimentChild\ThemeUpdater::repoUrl();
+		$this->assertStringStartsWith( 'https://github.com/', $url );
+	}
 }
