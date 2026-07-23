@@ -1,6 +1,7 @@
 name: Release asset
 
-# Manual fallback for re-uploading pediment-child-theme.zip against an existing
+# Manual fallback for re-uploading the release zip (<slug>.zip, where slug is
+# the style.css Text Domain) against an existing
 # tag — e.g. if the chained attach-zip job inside release-please.yml failed on
 # the first try. The normal path is for that job to run automatically when
 # release-please publishes a release; this workflow is only the escape hatch.
@@ -10,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Existing release tag to (re-)attach pediment-child-theme.zip to (e.g. v0.2.0)'
+        description: 'Existing release tag to (re-)attach the release zip to (e.g. v0.2.0)'
         required: true
         type: string
 

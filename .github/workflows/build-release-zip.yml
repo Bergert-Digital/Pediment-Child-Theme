@@ -3,21 +3,23 @@ name: Build release zip
 # Reusable workflow: checks out a tag, builds the JS bundle, installs prod
 # Composer deps (so the plugin-update-checker vendor/ ships), patches the
 # version into style.css + functions.php + package.json, packs a version-less
-# pediment-child-theme.zip via rsync + .distignore, and uploads it to the
+# <slug>.zip (slug = the style.css Text Domain) via rsync + .distignore, and
+# uploads it to the
 # matching GitHub Release.
 #
 # Called from release-please.yml (automatic when release-please publishes a
 # release) and release.yml (workflow_dispatch fallback for re-attaching).
 #
 # The asset filename is intentionally version-less so the GitHub download URL
-# is stable (/releases/download/v<X.Y.Z>/pediment-child-theme.zip) and the
-# theme's ThemeUpdater asset regex never needs updating per release.
+# is stable (/releases/download/v<X.Y.Z>/<slug>.zip) and the theme's
+# ThemeUpdater asset regex (derived from get_stylesheet()) matches without
+# per-release edits.
 
 on:
   workflow_call:
     inputs:
       tag:
-        description: 'Release tag to build pediment-child-theme.zip for (e.g. v0.2.0)'
+        description: 'Release tag to build the release zip for (e.g. v0.2.0)'
         required: true
         type: string
 
@@ -63,16 +65,27 @@ jobs:
           grep "PEDIMENT_CHILD_VERSION" functions.php
           grep '"version"' package.json
 
-      - name: Build distributable zip
+      - name: Resolve theme slug from style.css
+        id: slug
         run: |
-          STAGE="$(mktemp -d)/pediment-child-theme"
+          SLUG=$(sed -nE 's/^Text Domain:[[:space:]]*//p' style.css | head -1 | tr -d '[:space:]')
+          test -n "$SLUG" || { echo "::error::Could not read Text Domain from style.css"; exit 1; }
+          echo "slug=$SLUG" >> "$GITHUB_OUTPUT"
+          echo "Theme slug: $SLUG"
+
+      - name: Build distributable zip
+        env:
+          SLUG: ${{ steps.slug.outputs.slug }}
+        run: |
+          STAGE="$(mktemp -d)/$SLUG"
           mkdir -p "$STAGE"
           rsync -a --exclude-from=.distignore ./ "$STAGE/"
-          ( cd "$(dirname "$STAGE")" && zip -rq "$GITHUB_WORKSPACE/pediment-child-theme.zip" pediment-child-theme )
-          unzip -l "pediment-child-theme.zip" | tail -5
+          ( cd "$(dirname "$STAGE")" && zip -rq "$GITHUB_WORKSPACE/$SLUG.zip" "$SLUG" )
+          unzip -l "$SLUG.zip" | tail -5
 
       - name: Upload zip to GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ inputs.tag }}
-        run: gh release upload "$TAG" pediment-child-theme.zip --clobber
+          SLUG: ${{ steps.slug.outputs.slug }}
+        run: gh release upload "$TAG" "$SLUG.zip" --clobber

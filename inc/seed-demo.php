@@ -64,7 +64,15 @@ class Demo {
 			'contact'   => array(
 				'title'   => 'Contact',
 				'content' => self::page_band_hero( 'CONTACT', 'Contact', 'Tell us about your project.' ) .
-					self::page_band_content( '<!-- wp:pediment/contact-form {"includePhone":true} /-->' ),
+					self::page_band_content(
+						'<!-- wp:pediment/form {"style":{"spacing":{"blockGap":"var:preset|spacing|50"}}} -->' .
+							'<!-- wp:pediment/form-field {"label":"Name","fieldName":"name","required":true} /-->' .
+							'<!-- wp:pediment/form-field {"fieldType":"email","label":"Email","fieldName":"email","required":true} /-->' .
+							'<!-- wp:pediment/form-field {"fieldType":"tel","label":"Phone","fieldName":"phone"} /-->' .
+							'<!-- wp:pediment/form-field {"fieldType":"textarea","label":"Message","fieldName":"message","required":true} /-->' .
+							'<!-- wp:pediment/form-field {"fieldType":"checkbox","label":"I consent to my data being processed in accordance with the privacy policy.","fieldName":"consent","required":true} /-->' .
+						'<!-- /wp:pediment/form -->'
+					),
 				'front'   => false,
 			),
 			'blog'      => array(
