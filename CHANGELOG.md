@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.8.0](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.7.0...v0.8.0) (2026-07-25)
+
+
+### Features
+
+* **updates:** Test connection warns when tag style.css version diverges ([44ff03e](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/44ff03e4a8383c5932d1a5cbf5330533779c4386))
+
+
+### Bug Fixes
+
+* **updates:** address final review — remove invisible char, warn on marker regression ([b9764a4](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/b9764a4b9ffcaf81bdaf59213aa9ed3e3604b72b))
+* **updates:** bump committed style.css/functions.php version on release ([abcda61](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/abcda61462497fc308a4abbac6f453574c8c4506))
+* **updates:** bump committed theme version on release so one-click updates work ([#45](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/45)) ([55f4a95](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/55f4a952bc374ce754a335f48070811f0c4cfbf4))
+* **updates:** bump committed theme version so one-click updates work ([#46](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/46)) ([432faf6](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/432faf6498056b0507ec1c9e05c1e131a2f0166d))
+
 ## [0.7.0](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.6.0...v0.7.0) (2026-07-23)
 
 
