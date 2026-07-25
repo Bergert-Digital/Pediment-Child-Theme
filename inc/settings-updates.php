@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Reduce a GitHub repo URL to its "owner/repo" API path.
  *
- * @param string $repo_url e.g. https://github.com/acme/site/
+ * @param string $repo_url e.g. https://github.com/acme/site/.
  * @return string e.g. acme/site
  */
 function pediment_child_repo_api_path( string $repo_url ): string {
@@ -57,17 +57,29 @@ function pediment_child_style_version( string $style_css ): string {
  */
 function pediment_child_parse_probe_response( int $repo_status, int $releases_status, array $releases_body, string $asset_pattern, string $tag_style_version = '' ): array {
 	if ( 401 === $repo_status ) {
-		return array( 'ok' => false, 'message' => __( 'Token rejected by GitHub (401). Check the token value.', 'pediment-child' ) );
+		return array(
+			'ok'      => false,
+			'message' => __( 'Token rejected by GitHub (401). Check the token value.', 'pediment-child' ),
+		);
 	}
 	if ( 403 === $repo_status ) {
-		return array( 'ok' => false, 'message' => __( 'GitHub denied access (403). The token may lack Contents access or be rate-limited.', 'pediment-child' ) );
+		return array(
+			'ok'      => false,
+			'message' => __( 'GitHub denied access (403). The token may lack Contents access or be rate-limited.', 'pediment-child' ),
+		);
 	}
 	if ( 200 !== $repo_status ) {
-		/* translators: %d: HTTP status code. */
-		return array( 'ok' => false, 'message' => sprintf( __( 'Repository not visible with this token (HTTP %d).', 'pediment-child' ), $repo_status ) );
+		return array(
+			'ok'      => false,
+			/* translators: %d: HTTP status code. */
+			'message' => sprintf( __( 'Repository not visible with this token (HTTP %d).', 'pediment-child' ), $repo_status ),
+		);
 	}
 	if ( 200 !== $releases_status ) {
-		return array( 'ok' => false, 'message' => __( 'Repository visible, but no published release was found.', 'pediment-child' ) );
+		return array(
+			'ok'      => false,
+			'message' => __( 'Repository visible, but no published release was found.', 'pediment-child' ),
+		);
 	}
 	$assets = isset( $releases_body['assets'] ) && is_array( $releases_body['assets'] ) ? $releases_body['assets'] : array();
 	$tag    = isset( $releases_body['tag_name'] ) ? (string) $releases_body['tag_name'] : '';
@@ -81,8 +93,11 @@ function pediment_child_parse_probe_response( int $repo_status, int $releases_st
 		}
 	}
 	if ( '' === $matched_name ) {
-		/* translators: %s: release tag. */
-		return array( 'ok' => false, 'message' => sprintf( __( 'Release %s found, but no matching theme zip asset.', 'pediment-child' ), $tag ) );
+		return array(
+			'ok'      => false,
+			/* translators: %s: release tag. */
+			'message' => sprintf( __( 'Release %s found, but no matching theme zip asset.', 'pediment-child' ), $tag ),
+		);
 	}
 
 	$normalized_tag = preg_match( '/\d+\.\d+\.\d+\S*/', $tag, $tag_match ) ? $tag_match[0] : ltrim( $tag, 'vV' );
@@ -94,8 +109,11 @@ function pediment_child_parse_probe_response( int $repo_status, int $releases_st
 		);
 	}
 
-	/* translators: 1: release tag, 2: asset file name. */
-	return array( 'ok' => true, 'message' => sprintf( __( 'Success: release %1$s includes %2$s.', 'pediment-child' ), $tag, $matched_name ) );
+	return array(
+		'ok'      => true,
+		/* translators: 1: release tag, 2: asset file name. */
+		'message' => sprintf( __( 'Success: release %1$s includes %2$s.', 'pediment-child' ), $tag, $matched_name ),
+	);
 }
 
 /**
@@ -141,8 +159,8 @@ function pediment_child_render_updates_tab(): void {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
-	$resolved   = \PedimentChild\UpdateToken::resolve();
-	$configured = '' !== $resolved['token'];
+	$resolved    = \PedimentChild\UpdateToken::resolve();
+	$configured  = '' !== $resolved['token'];
 	$by_constant = 'constant' === $resolved['source'] || 'env' === $resolved['source'];
 	?>
 	<p><?php esc_html_e( 'A GitHub fine-grained personal access token with read-only Contents on this theme’s releases repository. Optional — only needed when updates come from a private repository.', 'pediment-child' ); ?></p>

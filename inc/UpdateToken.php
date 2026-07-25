@@ -18,17 +18,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class UpdateToken {
-	/** wp_options key holding the encrypted token. */
+	/** The wp_options key holding the encrypted token. */
 	public const OPTION = 'pediment_child_update_token';
 
-	/** wp-config constant / env var name for a plaintext token override. */
+	/** The wp-config constant / env var name for a plaintext token override. */
 	public const CONSTANT = 'PEDIMENT_CHILD_UPDATE_TOKEN';
 
-	/** wp-config constant overriding the encryption key material. */
+	/** The wp-config constant overriding the encryption key material. */
 	public const SECRET_CONSTANT = 'PEDIMENT_CHILD_UPDATE_SECRET';
 
 	/**
 	 * Choose encryption key material: an explicit override, else the WP salts.
+	 *
+	 * @param string $override Explicit key-material override; used verbatim when non-empty.
+	 * @param string $salt1    First WP salt constant value (e.g. AUTH_KEY), used when $override is empty.
+	 * @param string $salt2    Second WP salt constant value (e.g. SECURE_AUTH_KEY), used when $override is empty.
 	 */
 	public static function keyMaterial( string $override, string $salt1, string $salt2 ): string {
 		return '' !== $override ? $override : $salt1 . $salt2;
@@ -36,6 +40,8 @@ final class UpdateToken {
 
 	/**
 	 * Derive a 32-byte secretbox key from arbitrary key material.
+	 *
+	 * @param string $material Key material to hash into a fixed-length secretbox key.
 	 */
 	public static function deriveKey( string $material ): string {
 		return sodium_crypto_generichash( $material, '', SODIUM_CRYPTO_SECRETBOX_KEYBYTES );
@@ -43,6 +49,9 @@ final class UpdateToken {
 
 	/**
 	 * Encrypt a plaintext token for storage: base64( nonce . ciphertext ).
+	 *
+	 * @param string      $plain Plaintext token to encrypt.
+	 * @param string|null $key   Encryption key; defaults to the active key when omitted.
 	 */
 	public static function encrypt( string $plain, ?string $key = null ): string {
 		$key   = $key ?? self::activeKey();
@@ -53,6 +62,9 @@ final class UpdateToken {
 
 	/**
 	 * Decrypt a stored token. Returns '' on any failure (tamper, rotated salts).
+	 *
+	 * @param string      $stored Base64( nonce . ciphertext ) as produced by encrypt().
+	 * @param string|null $key    Decryption key; defaults to the active key when omitted.
 	 */
 	public static function decrypt( string $stored, ?string $key = null ): string {
 		$key = $key ?? self::activeKey();
@@ -70,19 +82,34 @@ final class UpdateToken {
 	/**
 	 * Pure precedence resolver: constant → env → option → none.
 	 *
+	 * @param string|null $constant    Value from the wp-config CONSTANT override, or null when undefined.
+	 * @param string|null $env         Value from the environment variable override, or null when unset.
+	 * @param string      $optionToken Decrypted token from the stored wp_options value, or ''.
 	 * @return array{token:string,source:string}
 	 */
 	public static function resolveFrom( ?string $constant, ?string $env, string $optionToken ): array {
 		if ( null !== $constant && '' !== $constant ) {
-			return array( 'token' => $constant, 'source' => 'constant' );
+			return array(
+				'token'  => $constant,
+				'source' => 'constant',
+			);
 		}
 		if ( null !== $env && '' !== $env ) {
-			return array( 'token' => $env, 'source' => 'env' );
+			return array(
+				'token'  => $env,
+				'source' => 'env',
+			);
 		}
 		if ( '' !== $optionToken ) {
-			return array( 'token' => $optionToken, 'source' => 'option' );
+			return array(
+				'token'  => $optionToken,
+				'source' => 'option',
+			);
 		}
-		return array( 'token' => '', 'source' => 'none' );
+		return array(
+			'token'  => '',
+			'source' => 'none',
+		);
 	}
 
 	/**
@@ -96,6 +123,8 @@ final class UpdateToken {
 	/**
 	 * Encrypt and persist a token. False if libsodium is unavailable, the key
 	 * material is empty (would silently derive a guessable key), or empty.
+	 *
+	 * @param string $pat Plaintext personal access token to encrypt and persist.
 	 */
 	public static function store( string $pat ): bool {
 		if ( ! function_exists( 'sodium_crypto_secretbox' ) ) {

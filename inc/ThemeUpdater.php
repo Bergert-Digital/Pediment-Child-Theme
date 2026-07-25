@@ -82,6 +82,8 @@ final class ThemeUpdater {
 	 *
 	 * Anchored at both ends so it matches "<slug>.zip" exactly and never a
 	 * longer asset that merely ends in it (e.g. "not-<slug>.zip").
+	 *
+	 * @param string $slug Theme slug (folder basename), used verbatim in the pattern.
 	 */
 	public static function assetPattern( string $slug ): string {
 		return '/^' . preg_quote( $slug, '/' ) . '\.zip$/';
