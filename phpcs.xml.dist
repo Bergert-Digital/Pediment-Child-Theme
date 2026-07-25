@@ -3,6 +3,7 @@
   <description>Coding standards for pediment-child-theme.</description>
 
   <file>functions.php</file>
+  <file>inc/</file>
   <file>src/blocks/</file>
 
   <exclude-pattern>build/*</exclude-pattern>
@@ -24,6 +25,32 @@
     <exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents"/>
     <exclude name="Generic.CodeAnalysis.UnusedFunctionParameter"/>
     <exclude name="WordPress.Security.EscapeOutput.OutputNotEscaped"/>
+  </rule>
+
+  <!--
+    inc/UpdateToken.php and inc/ThemeUpdater.php are deliberately modern-PHP:
+    namespaced, declare(strict_types=1), PSR-style camelCase methods. Renaming
+    them to snake_case would break every call site (inc/settings-updates.php,
+    the test suite) for no real benefit, so the WordPress naming sniffs are
+    excluded for just these two files. Their base64_encode()/base64_decode()
+    calls store an encrypted GitHub token at rest, not obfuscated code, so the
+    "obfuscation" warning does not apply here either.
+  -->
+  <rule ref="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid">
+    <exclude-pattern>inc/UpdateToken.php</exclude-pattern>
+    <exclude-pattern>inc/ThemeUpdater.php</exclude-pattern>
+  </rule>
+  <rule ref="WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase">
+    <exclude-pattern>inc/UpdateToken.php</exclude-pattern>
+    <exclude-pattern>inc/ThemeUpdater.php</exclude-pattern>
+  </rule>
+  <rule ref="WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode">
+    <exclude-pattern>inc/UpdateToken.php</exclude-pattern>
+    <exclude-pattern>inc/ThemeUpdater.php</exclude-pattern>
+  </rule>
+  <rule ref="WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode">
+    <exclude-pattern>inc/UpdateToken.php</exclude-pattern>
+    <exclude-pattern>inc/ThemeUpdater.php</exclude-pattern>
   </rule>
 
   <config name="testVersion" value="8.1-"/>
