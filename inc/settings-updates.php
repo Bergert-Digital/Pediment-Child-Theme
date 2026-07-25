@@ -30,8 +30,8 @@ function pediment_child_repo_api_path( string $repo_url ): string {
  * Parse the `Version:` header from raw style.css contents.
  *
  * Mirrors WordPress' own header scan (get_file_data regex) and
- * _cleanup_header_comment (strip from `*​/` or `?>`), so it agrees with what
- * wp_get_theme() would report for the same file.
+ * _cleanup_header_comment (strip from the closing comment marker or `?>`), so
+ * it agrees with what wp_get_theme() would report for the same file.
  *
  * @param string $style_css Raw style.css file contents.
  * @return string Parsed version (e.g. "1.2.3"), or '' if no Version header.
@@ -85,7 +85,7 @@ function pediment_child_parse_probe_response( int $repo_status, int $releases_st
 		return array( 'ok' => false, 'message' => sprintf( __( 'Release %s found, but no matching theme zip asset.', 'pediment-child' ), $tag ) );
 	}
 
-	$normalized_tag = ltrim( $tag, 'v' );
+	$normalized_tag = preg_match( '/\d+\.\d+\.\d+\S*/', $tag, $tag_match ) ? $tag_match[0] : ltrim( $tag, 'vV' );
 	if ( '' !== $tag_style_version && '' !== $normalized_tag && $tag_style_version !== $normalized_tag ) {
 		return array(
 			'ok'      => false,
@@ -269,8 +269,8 @@ function pediment_child_ajax_test_update_token(): void {
 	// mismatch means updates silently never appear. Best-effort: any failure
 	// leaves $tag_style_version empty and the probe falls back to success.
 	$tag_style_version = '';
-	$tag                = isset( $rel_body['tag_name'] ) ? (string) $rel_body['tag_name'] : '';
-	if ( '' !== $tag ) {
+	$tag               = isset( $rel_body['tag_name'] ) ? (string) $rel_body['tag_name'] : '';
+	if ( '' !== $tag && 200 === $rel_status ) {
 		$raw_args                      = $args;
 		$raw_args['headers']['Accept'] = 'application/vnd.github.raw';
 		$style                         = wp_remote_get( $base . '/contents/style.css?ref=' . rawurlencode( $tag ), $raw_args );

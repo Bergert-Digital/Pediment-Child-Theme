@@ -81,4 +81,10 @@ class UpdateProbeTest extends WP_UnitTestCase {
 		$result = pediment_child_parse_probe_response( 200, 200, $body, '/^acme\.zip$/', '' );
 		$this->assertTrue( $result['ok'] );
 	}
+
+	public function test_probe_success_with_component_prefixed_tag() {
+		$body   = array( 'tag_name' => 'theme-v1.2.0', 'assets' => array( array( 'name' => 'acme.zip' ) ) );
+		$result = pediment_child_parse_probe_response( 200, 200, $body, '/^acme\.zip$/', '1.2.0' );
+		$this->assertTrue( $result['ok'] );
+	}
 }

@@ -78,6 +78,9 @@ Set your client's identity before first client ship:
   `edit.tsx`, and CSS classes (keep it equal to the `Text Domain` slug above).
 - `PedimentChild` → your PHP `@package` tag.
 - `pediment_child_register_blocks` / `PEDIMENT_CHILD_*` → your prefixed function/constant names.
+  When renaming `PEDIMENT_CHILD_VERSION`, keep the trailing `x-release-please-version`
+  comment on that `define()` line — release-please matches on it, and losing it stops
+  releases from bumping the constant.
 - `PEDIMENT_CHILD_UPDATE_TOKEN` (constant / env var) and `pediment_child_update_token`
   (option) → your prefixed update-token names. The optional
   `PEDIMENT_CHILD_UPDATE_SECRET` constant (encryption-key override) renames the same way.
@@ -105,7 +108,11 @@ none**. Unset everywhere means no authentication and no fatal — updates are
 simply absent, exactly as for an unauthenticated public repo. On multisite, a
 `wp-config.php` constant is network-wide and wins over any per-site option.
 Use **Test connection** on the Updates tab to confirm the token can see the repo
-and its latest `<slug>.zip` release asset.
+and its latest `<slug>.zip` release asset. The probe also compares the committed
+`style.css` `Version:` header at the latest tag against the tag name itself,
+because that's what Plugin Update Checker reads to decide whether an update
+exists — not the tag. Tags cut before this check was added carry the old seed
+version and can't be retro-fixed; cut a new release and updates start working.
 
 ## Development
 

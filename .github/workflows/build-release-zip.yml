@@ -63,6 +63,10 @@ jobs:
           # backstop for the zip's internal consistency; the package.json patch
           # below stays load-bearing (package.json carries no release-please marker).
           VERSION="${TAG#v}"
+          COMMITTED=$(sed -nE 's/^Version:[[:space:]]*//p' style.css | head -1 | tr -d '[:space:]')
+          if [ "$COMMITTED" != "$VERSION" ]; then
+            echo "::warning::style.css at $TAG says Version: $COMMITTED, not $VERSION — release-please markers are not bumping the committed file. PUC will not offer this update."
+          fi
           sed -i -E "s/^(Version:[[:space:]]+).+$/\1$VERSION/" style.css
           sed -i -E "s/(define\([[:space:]]*'PEDIMENT_CHILD_VERSION',[[:space:]]*')[^']*('[[:space:]]*\))/\1$VERSION\2/" functions.php
           VERSION="$VERSION" node -e "const p=require('./package.json');p.version=process.env.VERSION;require('fs').writeFileSync('package.json',JSON.stringify(p,null,2)+'\n');"
