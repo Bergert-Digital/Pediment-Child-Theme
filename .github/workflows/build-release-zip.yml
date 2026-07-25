@@ -57,6 +57,11 @@ jobs:
         env:
           TAG: ${{ inputs.tag }}
         run: |
+          # release-please now bumps style.css + functions.php in the release
+          # commit (see release-please-config.json extra-files), so PUC reads the
+          # correct Version: at the tag. These two seds are a harmless idempotent
+          # backstop for the zip's internal consistency; the package.json patch
+          # below stays load-bearing (package.json carries no release-please marker).
           VERSION="${TAG#v}"
           sed -i -E "s/^(Version:[[:space:]]+).+$/\1$VERSION/" style.css
           sed -i -E "s/(define\([[:space:]]*'PEDIMENT_CHILD_VERSION',[[:space:]]*')[^']*('[[:space:]]*\))/\1$VERSION\2/" functions.php

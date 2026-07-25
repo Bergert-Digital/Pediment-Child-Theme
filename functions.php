@@ -16,7 +16,7 @@ if ( ! defined( 'PEDIMENT_CHILD_DIR' ) ) {
 	define( 'PEDIMENT_CHILD_DIR', __DIR__ );
 }
 if ( ! defined( 'PEDIMENT_CHILD_VERSION' ) ) {
-	define( 'PEDIMENT_CHILD_VERSION', '0.1.0' );
+	define( 'PEDIMENT_CHILD_VERSION', '0.1.0' ); // Bumped on release; see x-release-please-version.
 }
 
 // One-click theme updates from GitHub Releases (no manual zip uploads).
