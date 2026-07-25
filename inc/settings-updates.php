@@ -27,15 +27,35 @@ function pediment_child_repo_api_path( string $repo_url ): string {
 }
 
 /**
+ * Parse the `Version:` header from raw style.css contents.
+ *
+ * Mirrors WordPress' own header scan (get_file_data regex) and
+ * _cleanup_header_comment (strip from the closing comment marker or `?>`), so
+ * it agrees with what wp_get_theme() would report for the same file.
+ *
+ * @param string $style_css Raw style.css file contents.
+ * @return string Parsed version (e.g. "1.2.3"), or '' if no Version header.
+ */
+function pediment_child_style_version( string $style_css ): string {
+	if ( preg_match( '/^[ \t\/*#@]*Version:(.*)$/mi', $style_css, $m ) ) {
+		return trim( (string) preg_replace( '/\s*(?:\*\/|\?>).*$/', '', $m[1] ) );
+	}
+	return '';
+}
+
+/**
  * Diagnose a "Test connection" probe from its HTTP results.
  *
- * @param int                 $repo_status     Status of GET /repos/{owner}/{repo}.
- * @param int                 $releases_status Status of GET .../releases/latest.
- * @param array<string,mixed> $releases_body   Decoded latest-release JSON.
- * @param string              $asset_pattern   ThemeUpdater::assetPattern() regex.
+ * @param int                 $repo_status        Status of GET /repos/{owner}/{repo}.
+ * @param int                 $releases_status    Status of GET .../releases/latest.
+ * @param array<string,mixed> $releases_body      Decoded latest-release JSON.
+ * @param string              $asset_pattern      ThemeUpdater::assetPattern() regex.
+ * @param string              $tag_style_version  Version: header parsed from the committed
+ *                                                 style.css at the release tag, or '' when
+ *                                                 unknown/unavailable (best-effort).
  * @return array{ok:bool,message:string}
  */
-function pediment_child_parse_probe_response( int $repo_status, int $releases_status, array $releases_body, string $asset_pattern ): array {
+function pediment_child_parse_probe_response( int $repo_status, int $releases_status, array $releases_body, string $asset_pattern, string $tag_style_version = '' ): array {
 	if ( 401 === $repo_status ) {
 		return array( 'ok' => false, 'message' => __( 'Token rejected by GitHub (401). Check the token value.', 'pediment-child' ) );
 	}
@@ -51,15 +71,31 @@ function pediment_child_parse_probe_response( int $repo_status, int $releases_st
 	}
 	$assets = isset( $releases_body['assets'] ) && is_array( $releases_body['assets'] ) ? $releases_body['assets'] : array();
 	$tag    = isset( $releases_body['tag_name'] ) ? (string) $releases_body['tag_name'] : '';
+
+	$matched_name = '';
 	foreach ( $assets as $asset ) {
 		$name = is_array( $asset ) && isset( $asset['name'] ) ? (string) $asset['name'] : '';
 		if ( '' !== $name && preg_match( $asset_pattern, $name ) ) {
-			/* translators: 1: release tag, 2: asset file name. */
-			return array( 'ok' => true, 'message' => sprintf( __( 'Success: release %1$s includes %2$s.', 'pediment-child' ), $tag, $name ) );
+			$matched_name = $name;
+			break;
 		}
 	}
-	/* translators: %s: release tag. */
-	return array( 'ok' => false, 'message' => sprintf( __( 'Release %s found, but no matching theme zip asset.', 'pediment-child' ), $tag ) );
+	if ( '' === $matched_name ) {
+		/* translators: %s: release tag. */
+		return array( 'ok' => false, 'message' => sprintf( __( 'Release %s found, but no matching theme zip asset.', 'pediment-child' ), $tag ) );
+	}
+
+	$normalized_tag = preg_match( '/\d+\.\d+\.\d+\S*/', $tag, $tag_match ) ? $tag_match[0] : ltrim( $tag, 'vV' );
+	if ( '' !== $tag_style_version && '' !== $normalized_tag && $tag_style_version !== $normalized_tag ) {
+		return array(
+			'ok'      => false,
+			/* translators: 1: release tag, 2: committed style.css Version header. */
+			'message' => sprintf( __( 'Release %1$s ships style.css Version %2$s — updates will not appear until a new release bumps the committed version.', 'pediment-child' ), $tag, $tag_style_version ),
+		);
+	}
+
+	/* translators: 1: release tag, 2: asset file name. */
+	return array( 'ok' => true, 'message' => sprintf( __( 'Success: release %1$s includes %2$s.', 'pediment-child' ), $tag, $matched_name ) );
 }
 
 /**
@@ -228,11 +264,27 @@ function pediment_child_ajax_test_update_token(): void {
 	$rel_status = is_wp_error( $rel ) ? 0 : (int) wp_remote_retrieve_response_code( $rel );
 	$rel_body   = is_wp_error( $rel ) ? array() : (array) json_decode( (string) wp_remote_retrieve_body( $rel ), true );
 
+	// Fetch the committed style.css at the latest tag and read its Version:
+	// header. PUC offers updates based on THIS value (not the tag name), so a
+	// mismatch means updates silently never appear. Best-effort: any failure
+	// leaves $tag_style_version empty and the probe falls back to success.
+	$tag_style_version = '';
+	$tag               = isset( $rel_body['tag_name'] ) ? (string) $rel_body['tag_name'] : '';
+	if ( '' !== $tag && 200 === $rel_status ) {
+		$raw_args                      = $args;
+		$raw_args['headers']['Accept'] = 'application/vnd.github.raw';
+		$style                         = wp_remote_get( $base . '/contents/style.css?ref=' . rawurlencode( $tag ), $raw_args );
+		if ( ! is_wp_error( $style ) && 200 === (int) wp_remote_retrieve_response_code( $style ) ) {
+			$tag_style_version = pediment_child_style_version( (string) wp_remote_retrieve_body( $style ) );
+		}
+	}
+
 	$result = pediment_child_parse_probe_response(
 		(int) wp_remote_retrieve_response_code( $repo ),
 		$rel_status,
 		$rel_body,
-		\PedimentChild\ThemeUpdater::assetPattern( get_stylesheet() )
+		\PedimentChild\ThemeUpdater::assetPattern( get_stylesheet() ),
+		$tag_style_version
 	);
 
 	if ( $result['ok'] ) {
