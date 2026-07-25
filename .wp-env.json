@@ -3,7 +3,7 @@
   "phpVersion": "8.1",
   "themes": [
     ".",
-    "https://github.com/Bergert-Digital/pediment/releases/download/v2.0.0/pediment.zip"
+    "https://github.com/Bergert-Digital/pediment/releases/download/v2.1.0/pediment.zip"
   ],
   "plugins": [
     "https://github.com/Bergert-Digital/pediment-ai/releases/download/v0.4.0/pediment-ai.zip"
