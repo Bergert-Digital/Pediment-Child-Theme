@@ -51,4 +51,40 @@ class UpdateProbeTest extends WP_UnitTestCase {
 		$this->assertTrue( $result['ok'] );
 		$this->assertStringContainsString( 'acme.zip', $result['message'] );
 	}
+
+	public function test_style_version_parses_header() {
+		$css = "/*\nTheme Name: X\nVersion: 1.2.3\nRequires PHP: 8.1\n*/\n";
+		$this->assertSame( '1.2.3', pediment_child_style_version( $css ) );
+	}
+
+	public function test_style_version_absent_returns_empty() {
+		$this->assertSame( '', pediment_child_style_version( "/*\nTheme Name: X\n*/\n" ) );
+	}
+
+	public function test_probe_warns_on_version_divergence() {
+		$body   = array( 'tag_name' => 'v1.2.0', 'assets' => array( array( 'name' => 'acme.zip' ) ) );
+		$result = pediment_child_parse_probe_response( 200, 200, $body, '/^acme\.zip$/', '0.1.0' );
+		$this->assertFalse( $result['ok'] );
+		$this->assertStringContainsString( 'v1.2.0', $result['message'] );
+		$this->assertStringContainsString( '0.1.0', $result['message'] );
+	}
+
+	public function test_probe_success_when_version_matches_tag() {
+		$body   = array( 'tag_name' => 'v1.2.0', 'assets' => array( array( 'name' => 'acme.zip' ) ) );
+		$result = pediment_child_parse_probe_response( 200, 200, $body, '/^acme\.zip$/', '1.2.0' );
+		$this->assertTrue( $result['ok'] );
+		$this->assertStringContainsString( 'acme.zip', $result['message'] );
+	}
+
+	public function test_probe_success_when_version_unknown() {
+		$body   = array( 'tag_name' => 'v1.2.0', 'assets' => array( array( 'name' => 'acme.zip' ) ) );
+		$result = pediment_child_parse_probe_response( 200, 200, $body, '/^acme\.zip$/', '' );
+		$this->assertTrue( $result['ok'] );
+	}
+
+	public function test_probe_success_with_component_prefixed_tag() {
+		$body   = array( 'tag_name' => 'theme-v1.2.0', 'assets' => array( array( 'name' => 'acme.zip' ) ) );
+		$result = pediment_child_parse_probe_response( 200, 200, $body, '/^acme\.zip$/', '1.2.0' );
+		$this->assertTrue( $result['ok'] );
+	}
 }
