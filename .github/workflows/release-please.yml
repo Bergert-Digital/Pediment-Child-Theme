@@ -10,6 +10,19 @@ name: Release Please
 # because release-please uses GITHUB_TOKEN to create the release, and
 # GITHUB_TOKEN-issued events do not trigger other workflows (GitHub's
 # recursive-workflow protection). Chaining keeps everything in one run.
+#
+# Version bumps land on `main` only. `development` therefore keeps showing the
+# seed 0.1.0 in style.css / functions.php and a stale
+# .release-please-manifest.json — that lag is expected, not drift to repair.
+# Merging development → main stays clean because development never touches
+# those lines, so the merge keeps main's released values.
+#
+# Do NOT hand-edit `Version:` in style.css, PEDIMENT_CHILD_VERSION in
+# functions.php, or the manifest to "catch development up". Those lines are
+# release-please's state; editing them on development makes the next merge
+# fight the release commit, and a committed version that disagrees with the
+# tag silently breaks one-click updates for every client site (see the
+# fix(updates) release in v0.8.0).
 
 on:
   push:

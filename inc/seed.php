@@ -132,7 +132,7 @@ class Seed {
 		$log = self::import_images();
 		$log = array_merge( $log, self::set_logo_if_present() );
 
-		$pages = self::discover_pages( $dir );
+		$pages                  = self::discover_pages( $dir );
 		list( $ids, $page_log ) = self::upsert_pages_from( $pages );
 		$log                    = array_merge( $log, $page_log );
 
