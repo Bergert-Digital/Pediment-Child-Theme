@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.8.1](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.8.0...v0.8.1) (2026-07-27)
+
+
+### Bug Fixes
+
+* **update:** stop overwriting curated client docs ([383cc0d](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/383cc0dd6383b1883a90bb42063695ce95d5d66e))
+* **update:** stop overwriting curated client docs, widen phpcs to inc/ ([#51](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/51)) ([ab7d588](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/ab7d588cbfa026e25a2b502e6a9be8eda1fc200a))
+* **update:** stop the update skill overwriting curated client docs ([#50](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/50)) ([58c3940](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/58c394002bd006a19d3618be421aecc14a670d13))
+
 ## [0.8.0](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.7.0...v0.8.0) (2026-07-25)
 
 
