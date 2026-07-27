@@ -37,7 +37,8 @@ git fetch pediment-template main
 
 ### Step 2: Pull framework docs and the catalog generator
 
-Bring these from the template (they are framework assets, safe to take wholesale):
+Bring these from the template — safe to take wholesale **only on a repo that doesn't have
+them yet**:
 
 ```bash
 git checkout pediment-template/main -- \
@@ -45,6 +46,11 @@ git checkout pediment-template/main -- \
   docs/STYLING.md \
   tools/blocks-catalog.mjs
 ```
+
+> If either `docs/` file already exists here (you're *adopting* an existing client repo rather
+> than starting one), **stop and run the `update` skill instead**. Its notes and styling rules
+> are client-authored and not recoverable from the template — overwriting them silently
+> destroys them. `tools/blocks-catalog.mjs` alone is always safe to take wholesale.
 
 If the client's `package.json` lacks a `blocks:catalog` script, add it:
 `"blocks:catalog": "node tools/blocks-catalog.mjs"` (under `scripts`). Edit `package.json`

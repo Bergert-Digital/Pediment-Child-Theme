@@ -27,6 +27,24 @@ test('parsePreservedNotes recovers human notes keyed by block name', () => {
   assert.equal(notes['pediment/cta'], '_(add guidance)_');
 });
 
+// The `update` skill relies on this: it regenerates from the *client's* catalog rather than
+// the template's, because a client block's note exists nowhere else. Regenerating against a
+// doc that lacks those notes silently downgrades them to placeholders.
+test('buildCatalog preserves notes for client-prefixed blocks the template never had', () => {
+  const records = [
+    { source: 'child', blockJson: { name: 'wc/hero-band', title: 'Hero Band', description: 'x' } },
+    { source: 'parent', blockJson: { name: 'pediment/brand-new', title: 'New', description: 'x' } },
+  ];
+  const clientDoc = '## wc/hero-band\n\n**Use when:** the full-bleed castle hero band.\n';
+  const md = buildCatalog(records, clientDoc);
+
+  assert.match(md, /## wc\/hero-band[\s\S]*\*\*Use when:\*\* the full-bleed castle hero band\./);
+  // a genuinely new block still gets the marker, so the skill can adopt an upstream note for it
+  assert.match(md, /## pediment\/brand-new[\s\S]*\*\*Use when:\*\* _\(add guidance\)_/);
+  // regenerating against a doc without the client's note is exactly the data loss to avoid
+  assert.match(buildCatalog(records, ''), /## wc\/hero-band[\s\S]*_\(add guidance\)_/);
+});
+
 test('buildCatalog emits a section per block with attrs, class, source, preserved notes', () => {
   const records = [
     {
