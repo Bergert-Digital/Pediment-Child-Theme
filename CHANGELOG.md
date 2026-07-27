@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.8.2](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.8.1...v0.8.2) (2026-07-27)
+
+
+### Bug Fixes
+
+* **nav:** keep the header menu when a language filter hides it ([964ed91](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/964ed914e4efdae5de485945b3f252d000203094))
+* **nav:** keep the header menu when a language filter hides it ([#55](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/55)) ([8c4e010](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/8c4e010fc77ccd3076d425a701154caf653a97db))
+* **nav:** keep the header menu when a language filter hides it ([#56](https://github.com/Bergert-Digital/Pediment-Child-Theme/issues/56)) ([882e221](https://github.com/Bergert-Digital/Pediment-Child-Theme/commit/882e2219d4f8f72b5b8fc3f012494e22e258e547))
+
 ## [0.8.1](https://github.com/Bergert-Digital/Pediment-Child-Theme/compare/v0.8.0...v0.8.1) (2026-07-27)
 
 
