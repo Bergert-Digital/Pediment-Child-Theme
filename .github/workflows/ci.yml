@@ -29,6 +29,18 @@ jobs:
       - run: npm run lint:js
       - run: npm run build
 
+  # Unit tests for the tools/ helpers (block catalog, brand extraction, theme
+  # reskin). These import nothing but node builtins, so no `npm ci` — the job
+  # is a few seconds and gates the skills' logic that phpunit/e2e never touch.
+  test-tools:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+      - run: npm run test:tools
+
   phpunit:
     runs-on: ubuntu-latest
     steps:
