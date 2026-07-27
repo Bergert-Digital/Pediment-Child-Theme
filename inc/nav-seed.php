@@ -54,22 +54,58 @@ function pediment_nav_is_pristine_fallback( string $content ): bool {
 }
 
 /**
+ * Query navigation posts, retrying unfiltered when nothing matched.
+ *
+ * Multilingual plugins (Polylang, WPML) hook the query filters to scope
+ * results to the language being rendered. An entity tagged with a *different*
+ * language is then invisible: the header loses its whole menu, and the seeder,
+ * seeing nothing, creates a rival entity on the next run.
+ *
+ * So ask filtered first — a correctly translated per-language entity still
+ * wins — and only retry unfiltered when that found nothing. The retry only
+ * ever decides between the entity the site already has and no navigation at
+ * all, and needs no plugin detection.
+ *
+ * @param array $args get_posts() arguments; `suppress_filters` is set here.
+ * @return array Matching posts (or IDs, per `fields`).
+ */
+function pediment_nav_get_posts( array $args ): array {
+	$args['suppress_filters'] = false;
+
+	$posts = get_posts( $args );
+
+	if ( empty( $posts ) ) {
+		$args['suppress_filters'] = true;
+
+		$posts = get_posts( $args );
+	}
+
+	return $posts;
+}
+
+/**
  * Find the ID of our seeded navigation entity, if any. Read-only.
  *
  * Called at most once or twice per request (the render_block_data consumer
  * early-returns for non-navigation blocks), so an unmemoized lookup is fine.
  *
+ * Oldest first: should a site have accumulated duplicates (before the
+ * unfiltered retry above, a language-scoped lookup made the seeder create
+ * one per run), the original entity keeps winning instead of the bound menu
+ * changing every time another marked entity appears.
+ *
  * @return int Post ID, or 0 when none exists yet.
  */
 function pediment_nav_find_entity_id(): int {
-	$ids = get_posts(
+	$ids = pediment_nav_get_posts(
 		array(
-			'post_type'        => 'wp_navigation',
-			'post_status'      => 'any',
-			'numberposts'      => 1,
-			'fields'           => 'ids',
-			'meta_key'         => PEDIMENT_NAV_MARKER, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-			'suppress_filters' => false,
+			'post_type'   => 'wp_navigation',
+			'post_status' => 'any',
+			'numberposts' => 1,
+			'fields'      => 'ids',
+			'orderby'     => 'ID',
+			'order'       => 'ASC',
+			'meta_key'    => PEDIMENT_NAV_MARKER, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 		)
 	);
 
@@ -96,14 +132,13 @@ function pediment_nav_seed_entity(): int {
 
 	$blocks = pediment_nav_menu_blocks();
 
-	$fallback = get_posts(
+	$fallback = pediment_nav_get_posts(
 		array(
-			'post_type'        => 'wp_navigation',
-			'post_status'      => 'any',
-			'numberposts'      => 1,
-			'orderby'          => 'date',
-			'order'            => 'DESC',
-			'suppress_filters' => false,
+			'post_type'   => 'wp_navigation',
+			'post_status' => 'any',
+			'numberposts' => 1,
+			'orderby'     => 'date',
+			'order'       => 'DESC',
 		)
 	);
 
